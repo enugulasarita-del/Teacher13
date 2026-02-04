@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -101,23 +102,8 @@
     <Compile Include="Controls\CommunicationControl.Designer.cs">
       <DependentUpon>CommunicationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ResourcesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ResourcesControl.Designer.cs">
-      <DependentUpon>ResourcesControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ExamsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ExamsControl.Designer.cs">
-      <DependentUpon>ExamsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\AssignmentsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\AssignmentsControl.Designer.cs">
-      <DependentUpon>AssignmentsControl.cs</DependentUpon>
+    <Compile Include="Controls\SimpleChart.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\TimeTableControl.cs">
       <SubType>UserControl</SubType>
@@ -128,56 +114,44 @@
     <Compile Include="Controls\AnalyticsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\AssignmentsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FacultyLeaveControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TestsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\AnalyticsControl.Designer.cs">
       <DependentUpon>AnalyticsControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SyllabusControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\NoticesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\GradesControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\EventsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ReportsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\CalendarControl.cs">
+    <Compile Include="Controls\ResourcesControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\ClassCard.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\SimpleChart.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\SyllabusControl.cs">
+    <Compile Include="Controls\QuizControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\QuizCreatorControl.cs">
+    <Compile Include="Controls\SettingsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\FeeManagementControl.cs">
+    <Compile Include="Controls\SettingsControl.Designer.cs">
+      <DependentUpon>SettingsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AdminTimetableControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\InventoryControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LeaveManagementControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\PlacementControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\ProjectMentorshipControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LabManagementControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\AlumniControl.cs">
-      <SubType>UserControl</SubType>
+    <Compile Include="Controls\AdminTimetableControl.Designer.cs">
+      <DependentUpon>AdminTimetableControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -213,7 +187,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controls\" />
     <Folder Include="Models\" />
     <Folder Include="Resources\" />
   </ItemGroup>

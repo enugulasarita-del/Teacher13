@@ -1,111 +1,238 @@
 using System;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace TeacherDashboard.Controls
 {
     public partial class NoticesControl : UserControl
     {
-        private DataGridView dgvHistory;
+        // Theme Colors
+        private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
+        private Color bgColor = Color.FromArgb(18, 18, 18); // Dark BG
+        private Color cardBg = Color.FromArgb(32, 33, 36); // Card BG
+        private Color textColor = Color.White;
+        private Color placeholderColor = Color.Gray;
+        private Color borderColor = Color.FromArgb(60, 60, 60);
 
         public NoticesControl()
         {
-            SetupStrictLayout();
-            LoadData();
+            InitializeComponent();
+            SetupLayout();
         }
 
-        private void SetupStrictLayout()
+        private void SetupLayout()
         {
             this.Controls.Clear();
-            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.BackColor = bgColor;
+            this.Dock = DockStyle.Fill;
+            this.Font = new Font("Segoe UI", 11);
 
-            // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(173, 22, 37) };
-            Label lblTitle = new Label() { Text = "OFFICIAL NOTICE BOARD", Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(25, 15) };
-            pnlHeader.Controls.Add(lblTitle);
+            // 1. Fixed Header
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(25, 25, 25) };
+            Label lblHeaderTitle = new Label() { 
+                Text = "📢  POST NOTICES", 
+                Font = new Font("Segoe UI", 18, FontStyle.Bold), 
+                ForeColor = Color.White, 
+                AutoSize = true, 
+                Location = new Point(30, 18) 
+            };
+            pnlHeader.Controls.Add(lblHeaderTitle);
+            Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
+            pnlHeader.Controls.Add(pnlAccent);
             this.Controls.Add(pnlHeader);
 
-            Panel pnlScroll = new Panel() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(25) };
+            // 2. Scrollable Container
+            Panel pnlScroll = new Panel() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(0) };
             this.Controls.Add(pnlScroll);
 
-            // 2. Urgent Notices (Top - Interactive Horizontal Scroll)
-            Label lblUrgent = new Label() { Text = "URGENT ANNOUNCEMENTS", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(241, 196, 15), Dock = DockStyle.Top, Height = 40 };
-            pnlScroll.Controls.Add(lblUrgent);
-
-            FlowLayoutPanel flpUrgent = new FlowLayoutPanel() { Dock = DockStyle.Top, Height = 160, WrapContents = false, AutoScroll = true, Padding = new Padding(0, 5, 0, 10) };
-            flpUrgent.Controls.Add(CreateNoticeCard("Exam Deadline", "Final Year Projects must be submitted by Feb 10th.", Color.FromArgb(231, 76, 60)));
-            flpUrgent.Controls.Add(CreateNoticeCard("Holiday Update", "College will remain closed on Jan 31st.", Color.FromArgb(52, 152, 219)));
-            flpUrgent.Controls.Add(CreateNoticeCard("Staff Meeting", "Internal Dept meeting scheduled for tomorrow @ 11 AM.", Color.FromArgb(46, 204, 113)));
-            pnlScroll.Controls.Add(flpUrgent);
-
-            // 3. Pinned Reminders (Middle - Related Feature)
-            Label lblPinned = new Label() { Text = "PINNED REMINDERS", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.Gray, Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 0) };
-            pnlScroll.Controls.Add(lblPinned);
-
-            FlowLayoutPanel flpPinned = new FlowLayoutPanel() { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(0, 5, 0, 20) };
-            string[] pinnedItems = { "✔ Submit Monthly Attendance by 5th", "✔ Upload Unit Test 2 marks", "✔ Update Faculty Profile for NBA Audit", "✔ Renew Library Membership" };
-            foreach (var item in pinnedItems)
-            {
-                Label l = new Label() { Text = item, ForeColor = Color.LightGray, Font = new Font("Segoe UI", 9), Size = new Size(350, 25) };
-                flpPinned.Controls.Add(l);
-            }
-            pnlScroll.Controls.Add(flpPinned);
-
-            // 4. History Notice List (Bottom)
-            Label lblHistory = new Label() { Text = "ALL PREVIOUS NOTICES", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Top, Height = 40, Margin = new Padding(0, 20, 0, 0) };
-            pnlScroll.Controls.Add(lblHistory);
-
-            dgvHistory = new DataGridView() { 
+            // Flow Layout for vertical stacking with proper spacing
+            FlowLayoutPanel flpForm = new FlowLayoutPanel() { 
                 Dock = DockStyle.Top, 
-                Height = 300, 
-                BackgroundColor = Color.FromArgb(28, 28, 28), 
-                BorderStyle = BorderStyle.None,
-                EnableHeadersVisualStyles = false,
-                ColumnHeadersHeight = 40,
-                GridColor = Color.FromArgb(45, 45, 45)
+                FlowDirection = FlowDirection.TopDown, 
+                WrapContents = false, 
+                AutoSize = true, 
+                Padding = new Padding(50, 20, 50, 50),
+                BackColor = Color.Transparent
             };
-            this.dgvHistory.DefaultCellStyle.BackColor = Color.White;
-            dgvHistory.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
-            dgvHistory.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            pnlScroll.Controls.Add(dgvHistory);
+            pnlScroll.Controls.Add(flpForm);
 
-            // Force Strict Docking Priority (Outer)
-            this.Controls.SetChildIndex(pnlHeader, 1);
-            this.Controls.SetChildIndex(pnlScroll, 0);
+            // --- FORM ROWS (One by One from Top to Bottom) ---
 
-            // Force Strict Docking Priority (Inside Scroll Panel)
-            pnlScroll.Controls.SetChildIndex(lblUrgent, 5);
-            pnlScroll.Controls.SetChildIndex(flpUrgent, 4);
-            pnlScroll.Controls.SetChildIndex(lblPinned, 3);
-            pnlScroll.Controls.SetChildIndex(flpPinned, 2);
-            pnlScroll.Controls.SetChildIndex(lblHistory, 1);
-            pnlScroll.Controls.SetChildIndex(dgvHistory, 0);
+            // A. Title
+            flpForm.Controls.Add(CreateLabel("NOTICE TITLE"));
+            flpForm.Controls.Add(CreateInputGroup("T", "Enter title of notice here...", 55));
+
+            // B. Category & Priority (Side by Side)
+            flpForm.Controls.Add(new Panel() { Height = 20 }); // Spacer
+            TableLayoutPanel tlpRow1 = new TableLayoutPanel() { Width = 900, Height = 85, ColumnCount = 2, Margin = new Padding(0) };
+            tlpRow1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            tlpRow1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            AddDropdown(tlpRow1, "Category", new string[] { "General", "Academic", "Exam", "Event" }, 0);
+            AddDropdown(tlpRow1, "Priority", new string[] { "Medium", "High", "Low" }, 1);
+            flpForm.Controls.Add(tlpRow1);
+
+            // C. Target Audience Section
+            flpForm.Controls.Add(new Panel() { Height = 20 }); // Spacer
+            flpForm.Controls.Add(CreateLabel("TARGET AUDIENCE (OPTIONAL)"));
+            
+            TableLayoutPanel tlpRow2 = new TableLayoutPanel() { Width = 900, Height = 85, ColumnCount = 2, Margin = new Padding(0) };
+            tlpRow2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            tlpRow2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50f));
+            AddDropdown(tlpRow2, "Department", new string[] { "All Departments", "B.Sc IT", "B.Sc CS", "BMS", "B.Com" }, 0);
+            AddDropdown(tlpRow2, "Year / Semester", new string[] { "All Years", "FY", "SY", "TY" }, 1);
+            flpForm.Controls.Add(tlpRow2);
+
+            // D. Notice Content
+            flpForm.Controls.Add(new Panel() { Height = 20 }); // Spacer
+            flpForm.Controls.Add(CreateLabel("NOTICE CONTENT / MESSAGE"));
+            Panel pnlContentWrap = new Panel() { Size = new Size(900, 200), BackColor = cardBg, Padding = new Padding(15) };
+            pnlContentWrap.Paint += (s, e) => DrawBorder(e.Graphics, pnlContentWrap.ClientRectangle, borderColor);
+            TextBox txtContent = new TextBox() { 
+                Text = "", 
+                Multiline = true, 
+                Dock = DockStyle.Fill, 
+                BorderStyle = BorderStyle.None, 
+                BackColor = cardBg, 
+                ForeColor = textColor, 
+                Font = new Font("Segoe UI", 11) 
+            };
+            pnlContentWrap.Controls.Add(txtContent);
+            flpForm.Controls.Add(pnlContentWrap);
+
+            // E. Link (Optional)
+            flpForm.Controls.Add(new Panel() { Height = 20 }); // Spacer
+            flpForm.Controls.Add(CreateLabel("REDIRECT LINK (OPTIONAL)"));
+            flpForm.Controls.Add(CreateInputGroup("🔗", "https://example.com/more-info", 55));
+
+            // F. Attachment Section
+            flpForm.Controls.Add(new Panel() { Height = 20 }); // Spacer
+            flpForm.Controls.Add(CreateLabel("ATTACHMENT"));
+            Panel pnlAttach = new Panel() { Size = new Size(900, 100), BackColor = cardBg, Padding = new Padding(20) };
+            pnlAttach.Paint += (s, e) => DrawBorder(e.Graphics, pnlAttach.ClientRectangle, borderColor);
+            Button btnSelect = new Button() { 
+                Text = "📎 Select File (PDF, Image)", 
+                Dock = DockStyle.Fill, 
+                FlatStyle = FlatStyle.Flat, 
+                ForeColor = primaryColor, 
+                Font = new Font("Segoe UI Semibold", 10),
+                Cursor = Cursors.Hand
+            };
+            btnSelect.FlatAppearance.BorderColor = primaryColor;
+            pnlAttach.Controls.Add(btnSelect);
+            flpForm.Controls.Add(pnlAttach);
+
+            // G. Final Post Button
+            flpForm.Controls.Add(new Panel() { Height = 40 }); // Large Spacer
+            Button btnPost = new Button() { 
+                Text = "➤ POST NOTICE TO STUDENTS", 
+                Size = new Size(900, 60), 
+                BackColor = primaryColor, 
+                ForeColor = Color.White, 
+                FlatStyle = FlatStyle.Flat, 
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnPost.FlatAppearance.BorderSize = 0;
+            flpForm.Controls.Add(btnPost);
+
+            // Ensure the form fills width on resize
+            pnlScroll.Resize += (s, e) => {
+                int targetWidth = pnlScroll.Width - 100;
+                flpForm.Width = pnlScroll.Width;
+                foreach (Control c in flpForm.Controls) {
+                    if (c is Panel || c is TableLayoutPanel || c is Button) {
+                        c.Width = targetWidth;
+                    }
+                }
+            };
         }
 
-        private Panel CreateNoticeCard(string title, string content, Color accent)
+        private Label CreateLabel(string text)
         {
-            Panel card = new Panel() { Size = new Size(320, 140), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 20, 20) };
-            Panel side = new Panel() { Dock = DockStyle.Left, Width = 6, BackColor = accent };
-            
-            Label lblT = new Label() { Text = title, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.White, Location = new Point(20, 15), AutoSize = true };
-            Label lblC = new Label() { Text = content, Font = new Font("Segoe UI", 9), ForeColor = Color.FromArgb(180, 180, 180), Location = new Point(20, 45), Size = new Size(280, 70) };
-            
-            card.Controls.AddRange(new Control[] { side, lblT, lblC });
-            return card;
+            return new Label() { 
+                Text = text, 
+                Font = new Font("Segoe UI", 9, FontStyle.Bold), 
+                ForeColor = primaryColor, 
+                AutoSize = true, 
+                Margin = new Padding(0, 10, 0, 5) 
+            };
         }
 
-        private void LoadData()
+        private Panel CreateInputGroup(string icon, string placeholder, int height)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Date");
-            dt.Columns.Add("Category");
-            dt.Columns.Add("Subject");
-            dt.Rows.Add("2026-01-25", "Event", "Annual Sports Day Registration");
-            dt.Rows.Add("2026-01-20", "Library", "New Journals added to CS Section");
-            dt.Rows.Add("2026-01-18", "Exam", "Backlog Results Published");
-            dgvHistory.DataSource = dt;
-            dgvHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            Panel p = new Panel() { Size = new Size(900, height), BackColor = cardBg };
+            p.Paint += (s, e) => DrawBorder(e.Graphics, p.ClientRectangle, borderColor);
+            
+            Label lblIcon = new Label() { 
+                Text = icon, 
+                Font = new Font("Segoe UI", 16), 
+                ForeColor = primaryColor, 
+                Location = new Point(15, (height-30)/2), 
+                AutoSize = true,
+                BackColor = Color.Transparent
+            };
+            
+            TextBox txt = new TextBox() { 
+                Text = "", 
+                BorderStyle = BorderStyle.None, 
+                Font = new Font("Segoe UI", 11), 
+                BackColor = cardBg,
+                ForeColor = textColor, 
+                Location = new Point(60, (height-25)/2), 
+                Width = 800,
+                Anchor = AnchorStyles.Left | AnchorStyles.Right
+            };
+            
+            p.Controls.AddRange(new Control[] { lblIcon, txt });
+            return p;
+        }
+
+        private void AddDropdown(TableLayoutPanel parent, string labelText, string[] items, int col)
+        {
+            Panel container = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(0, 0, 20, 0) };
+            Label lbl = new Label() { Text = labelText, Font = new Font("Segoe UI", 8), ForeColor = placeholderColor, Location = new Point(5, 0), AutoSize = true };
+            
+            Panel box = new Panel() { Location = new Point(0, 22), Height = 50, BackColor = cardBg };
+            box.Paint += (s, e) => DrawBorder(e.Graphics, box.ClientRectangle, borderColor);
+            
+            ComboBox cb = new ComboBox() { 
+                Location = new Point(10, 12), 
+                FlatStyle = FlatStyle.Flat, 
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 11),
+                BackColor = cardBg,
+                ForeColor = Color.White,
+                Width = 350 // Will be resized
+            };
+            cb.Items.AddRange(items);
+            cb.SelectedIndex = 0;
+
+            box.Controls.Add(cb);
+            container.Controls.AddRange(new Control[] { lbl, box });
+            parent.Controls.Add(container, col, 0);
+
+            parent.Resize += (s, e) => {
+                box.Width = container.Width - 25;
+                cb.Width = box.Width - 25;
+            };
+        }
+
+        private void DrawBorder(Graphics g, Rectangle r, Color color)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (Pen pen = new Pen(color, 1))
+            {
+                g.DrawRectangle(pen, r.X, r.Y, r.Width - 1, r.Height - 1);
+            }
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.Name = "NoticesControl";
+            this.Size = new Size(1100, 900);
+            this.ResumeLayout(false);
         }
     }
 }

@@ -8,251 +8,286 @@ namespace TeacherDashboard
 {
     public partial class MainForm : Form
     {
-        public string Role { get; private set; }
-        public string UserName { get; private set; }
+        private string userRole;
+        private string userName;
+        private System.Windows.Forms.Timer clockTimer;
+        private bool isSidebarCollapsed = false;
+        private System.Collections.Generic.Dictionary<Button, string> menuOriginalText = new System.Collections.Generic.Dictionary<Button, string>();
+        public string UserRole => userRole;
+        public string UserName => userName;
 
-        public MainForm(string role, string userName)
+        public MainForm(string role, string name)
         {
             InitializeComponent();
-            this.Role = role;
-            this.UserName = userName;
-            this.lblUserName.Text = userName;
-            this.lblRole.Text = role;
+            this.DoubleBuffered = true; // Improve Performance
+            this.userRole = role;
+            this.userName = name;
             
             SetupMenu();
+            UpdateProfile();
+            StartClock();
+            
+            // Load Default View
             SwitchPanel("DASHBOARD");
         }
 
         private void SetupMenu()
         {
-            bool isAdmin = Role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+            // Initializing Visibility based on Role
+            bool isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
             
-            // --- ADMINISTRATION SECTION (Admin Only) ---
+            // --- Common Features (Always Visible) ---
+            btnDashboard.Visible = true;
+            btnSettings.Visible = true;
+            btnLogout.Visible = true;
+
+            // --- ADMIN ONLY Features ---
             lblAdminSection.Visible = isAdmin;
             btnManageTeachers.Visible = isAdmin;
             btnAnalytics.Visible = isAdmin;
+            btnAdminTimetable.Visible = isAdmin;
             btnFees.Visible = isAdmin;
             btnInventory.Visible = isAdmin;
             btnPlacement.Visible = isAdmin;
             btnAlumni.Visible = isAdmin;
 
-            // --- ACADEMIC SECTION (Teacher/Faculty Only) ---
+            // --- TEACHER ONLY Features ---
             lblAcademic.Visible = !isAdmin;
             btnClasses.Visible = !isAdmin;
             btnStudents.Visible = !isAdmin;
             btnSyllabus.Visible = !isAdmin;
             btnAttendance.Visible = !isAdmin;
             
-            // --- MANAGEMENT (Mixed/Role-Dependent) ---
-            lblManagement.Visible = true; 
-            btnNotices.Visible = true;
-            btnComm.Visible = true;
-            btnEvents.Visible = true;
-            btnCalendar.Visible = true;
-            btnReports.Visible = true;
-
-            // Teacher Specific Management Items (Hide from Admin)
+            lblManagement.Visible = !isAdmin;
+            lblOperations.Visible = !isAdmin;
+            btnComm.Visible = !isAdmin;           // Official Hub - Teacher Only
+            btnNotices.Visible = !isAdmin;        // Post Notices - Teacher Only
             btnQuiz.Visible = !isAdmin;
-            btnLabs.Visible = !isAdmin;
-            btnGrades.Visible = !isAdmin;
-            btnProject.Visible = !isAdmin;
             btnResources.Visible = !isAdmin;
             btnExams.Visible = !isAdmin;
             btnAssignments.Visible = !isAdmin;
-            btnTimeTable.Visible = !isAdmin;
             btnLeave.Visible = !isAdmin;
+            btnReports.Visible = !isAdmin;
 
-            // Header Dark Theme Apply
-            pnlHeader.BackColor = Color.FromArgb(32, 33, 36);
-            lblCurrentView.ForeColor = Color.White;
-            btnExit.ForeColor = Color.White;
-
-            // Profile Card Role Badge
             if (isAdmin)
             {
-                lblRole.Text = "👑 System Administrator";
-                lblRole.ForeColor = Color.FromArgb(241, 196, 15); // Golden
-                lblUserBadge.Text = "ADMIN PRIVILEGES";
-                lblUserBadge.BackColor = Color.FromArgb(173, 22, 37);
+                btnAnalytics.Text = "📊  Project Analytics";
             }
-            else
-            {
-                lblRole.Text = "👨‍🏫 Academic Faculty";
-                lblRole.ForeColor = Color.FromArgb(180, 180, 180);
-                lblUserBadge.Text = "FACULTY MEMBER";
-                lblUserBadge.BackColor = Color.FromArgb(46, 204, 113);
-            }
-
-            // Force layout recalculation for the FlowLayoutPanel
-            flpMenu.ResumeLayout(true);
-            flpMenu.PerformLayout();
         }
 
-        private void btnExit_Click(object sender, EventArgs e)
+        private void UpdateProfile()
         {
-            Application.Exit();
+            lblUserName.Text = userName;
+            lblRole.Text = userRole;
+            lblUserBadge.Text = userName.Substring(0, 1).ToUpper();
         }
 
-        private void btnLogout_Click(object sender, EventArgs e)
+        private void StartClock()
         {
-            this.Close();
-            // Assuming LoginForm will be shown by Program.cs or handled elsewhere
+            clockTimer = new System.Windows.Forms.Timer();
+            clockTimer.Interval = 1000;
+            clockTimer.Tick += (s, e) => {
+                lblHeaderClock.Text = DateTime.Now.ToString("ddd, MMM dd | hh:mm tt");
+            };
+            clockTimer.Start();
         }
 
         private void SidebarButton_Click(object sender, EventArgs e)
         {
-            Button btn = (Button)sender;
-            string tag = btn.Tag?.ToString();
-
-            if (tag == "LOGOUT")
+            Button btn = sender as Button;
+            if (btn == null || btn.Tag == null) return;
+            
+            string viewTag = btn.Tag.ToString();
+            
+            if (viewTag == "LOGOUT")
             {
-                // Restart the application to show Login Form again
-                Application.Restart(); 
+                this.DialogResult = DialogResult.None;
+                Application.Restart();
                 return;
             }
 
-            lblCurrentView.Text = btn.Text;
-            SwitchPanel(tag);
+            SwitchPanel(viewTag);
         }
 
-        private void SwitchPanel(string tag)
+        private void SwitchPanel(string view)
         {
-            pnlContent.Controls.Clear();
             UserControl control = null;
+            string title = view;
 
-            switch (tag)
+            switch (view)
             {
                 case "DASHBOARD":
-                    control = new DashboardControl(this.Role, this.UserName);
-                    break;
-                case "MANAGE TEACHERS":
-                    control = new ManageTeachersControl();
+                    control = new DashboardControl(userRole, userName);
+                    title = "Dashboard Overview";
                     break;
                 case "CLASSES":
                     control = new ClassesControl();
+                    title = "Teaching Portfolio & Classes";
                     break;
                 case "STUDENTS":
                     control = new StudentsControl();
-                    break;
-                case "ATTENDANCE":
-                    control = new AttendanceControl();
-                    break;
-                case "MESSAGES":
-                    control = new CommunicationControl();
-                    break;
-                case "SETTINGS":
-                    control = new DashboardControl(this.Role, this.UserName);
-                    break;
-                case "RESOURCES":
-                    control = new ResourcesControl();
-                    break;
-                case "EXAMS":
-                    control = new ExamsControl();
+                    title = "Student Performance Hub";
                     break;
                 case "ASSIGNMENTS":
                     control = new AssignmentsControl();
+                    title = "Assignment Management";
                     break;
-                case "TIMETABLE":
-                    control = new TimeTableControl();
+                case "ATTENDANCE":
+                    control = new AttendanceControl();
+                    title = "Attendance Management Tracker";
                     break;
-                case "ANALYTICS":
-                    control = new AnalyticsControl();
+                case "MESSAGES":
+                    control = new CommunicationControl();
+                    title = "Official Communication Hub";
                     break;
                 case "NOTICES":
                     control = new NoticesControl();
-                    break;
-                case "GRADES":
-                    control = new GradesControl();
-                    break;
-                case "EVENTS":
-                    control = new EventsControl();
+                    title = "Post Faculty & Student Notices";
                     break;
                 case "REPORTS":
                     control = new ReportsControl();
+                    title = "Academic & Faculty Reports";
                     break;
-                case "CALENDAR":
-                    control = new CalendarControl();
+                case "RESOURCES":
+                    control = new ResourcesControl();
+                    title = "Digital Library & Resources";
                     break;
                 case "SYLLABUS":
                     control = new SyllabusControl();
+                    title = "Curriculum Tracker & Progress";
                     break;
-                case "QUIZ":
-                    control = new QuizCreatorControl();
+                case "MANAGE TEACHERS":
+                    control = new ManageTeachersControl();
+                    title = "Faculty Management";
+                    break;
+                case "ANALYTICS":
+                    control = new AnalyticsControl();
+                    title = "Reports & Analytics";
                     break;
                 case "LEAVE":
-                    control = new LeaveManagementControl();
+                    control = new FacultyLeaveControl();
+                    title = "Faculty Leave Management";
                     break;
-                case "PROJECT":
-                    control = new ProjectMentorshipControl();
+                case "TESTS":
+                    control = new TestsControl();
+                    title = "Exam Portfolio & Duties";
                     break;
-                case "FEES":
-                    control = new FeeManagementControl();
+                case "QUIZ":
+                    control = new QuizControl();
+                    title = "Interactive Quiz Creator";
                     break;
-                case "INVENTORY":
-                    control = new InventoryControl();
+                case "SETTINGS":
+                    control = new SettingsControl();
+                    title = "System Settings & Preferences";
                     break;
-                case "PLACEMENT":
-                    control = new PlacementControl();
+                case "ADMIN_TIMETABLE":
+                    control = new AdminTimetableControl();
+                    title = "Timetable & Teacher Assignment";
                     break;
-                case "LABS":
-                    control = new LabManagementControl();
-                    break;
-                case "ALUMNI":
-                    control = new AlumniControl();
-                    break;
+                // Add more cases as needed for other buttons
                 default:
-                    control = new DashboardControl(this.Role, this.UserName);
+                    // If not implemented yet, show a placeholder
+                    control = new UserControl() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(30, 30, 30) };
+                    Label lbl = new Label() { Text = view + " View - Under Development", ForeColor = Color.Gray, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 12) };
+                    control.Controls.Add(lbl);
                     break;
             }
 
             if (control != null)
             {
-                control.Dock = DockStyle.Fill;
+                lblCurrentView.Text = title;
+                pnlContent.Controls.Clear();
                 pnlContent.Controls.Add(control);
+                control.Dock = DockStyle.Fill;
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void btnToggleSidebar_Click(object sender, EventArgs e)
         {
-            base.OnPaint(e);
-            // Custom painting if needed
-        }
-    }
-
-    // Custom Panel for Glassmorphism
-    public class GlassPanel : Panel
-    {
-        public GlassPanel()
-        {
-            this.BackColor = Color.FromArgb(40, 255, 255, 255);
-            this.DoubleBuffered = true;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            base.OnPaint(e);
-            using (Pen pen = new Pen(Color.FromArgb(80, 255, 255, 255), 1))
+            isSidebarCollapsed = !isSidebarCollapsed;
+            
+            // Backup text if not already done
+            if (menuOriginalText.Count == 0)
             {
-                e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+                foreach (Control c in flpMenu.Controls)
+                {
+                    if (c is Button btn) menuOriginalText[btn] = btn.Text;
+                }
+            }
+
+            if (isSidebarCollapsed)
+            {
+                masterCoordinator.ColumnStyles[0].Width = 65;
+                profileCard.Visible = false;
+                imgLogo.Visible = false;
+                
+                foreach (Control c in flpMenu.Controls)
+                {
+                    if (c is Button btn)
+                    {
+                        // Safely split text, if icon is present
+                        string[] parts = btn.Text.Split(' ');
+                        btn.Text = parts.Length > 0 ? parts[0] : btn.Text;
+                        btn.TextAlign = ContentAlignment.MiddleCenter;
+                        btn.Padding = new Padding(0);
+                    }
+                    else if (c is Label lbl)
+                    {
+                        lbl.Visible = false;
+                    }
+                }
+            }
+            else
+            {
+                masterCoordinator.ColumnStyles[0].Width = 250;
+                profileCard.Visible = true;
+                imgLogo.Visible = true;
+                
+                foreach (Control c in flpMenu.Controls)
+                {
+                    if (c is Button btn && menuOriginalText.ContainsKey(btn))
+                    {
+                        btn.Text = menuOriginalText[btn];
+                        btn.TextAlign = ContentAlignment.MiddleLeft;
+                        btn.Padding = new Padding(25, 0, 0, 0);
+                    }
+                    else if (c is Label lbl)
+                    {
+                        // Only show labels that should be visible based on role
+                        bool isAdmin = userRole.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                        if (lbl == lblAcademic || lbl == lblManagement || lbl == lblOperations)
+                            lbl.Visible = !isAdmin;
+                        else if (lbl == lblAdminSection)
+                            lbl.Visible = isAdmin;
+                    }
+                }
             }
         }
     }
+
+    // --- Helper UI Components Used in Designer ---
 
     public class GradientPanel : Panel
     {
-        public Color ColorTop { get; set; } = Color.FromArgb(173, 22, 37);
-        public Color ColorBottom { get; set; } = Color.FromArgb(60, 10, 20);
+        public Color ColorTop { get; set; } = Color.FromArgb(28, 40, 51); // Dark Blueish
+        public Color ColorBottom { get; set; } = Color.FromArgb(20, 26, 31);
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (this.ClientRectangle.Width <= 0 || this.ClientRectangle.Height <= 0) return;
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            using (LinearGradientBrush lgb = new LinearGradientBrush(this.ClientRectangle, ColorTop, ColorBottom, 90F))
+            LinearGradientBrush lgb = new LinearGradientBrush(this.ClientRectangle, this.ColorTop, this.ColorBottom, 90F);
+            Graphics g = e.Graphics;
+            g.FillRectangle(lgb, this.ClientRectangle);
+            base.OnPaint(e);
+        }
+    }
+
+    public class GlassPanel : Panel
+    {
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            using (SolidBrush brush = new SolidBrush(Color.FromArgb(20, 255, 255, 255)))
             {
-                e.Graphics.FillRectangle(lgb, this.ClientRectangle);
+                e.Graphics.FillRectangle(brush, this.ClientRectangle);
             }
             base.OnPaint(e);
         }

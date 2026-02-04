@@ -8,10 +8,23 @@ namespace TeacherDashboard.Controls
 {
     public partial class AttendanceControl : UserControl
     {
+        private Label lblCurrentClassDisplay;
+        private ComboBox cmbDept;
+        private ComboBox cmbDiv;
+        private ListBox lstMonthlyDef;
+        private ListBox lstMerit;
+        private Label lblDefTitle;
+        private Label lblMeritTitle;
+        private Panel pnlPie;
+        private Panel pnlLegend;
+        private float regularPercent = 75;
+        private float defaulterPercent = 25;
+
         public AttendanceControl()
         {
             InitializeComponent();
             SetupStrictLayout();
+            UpdateClassMapping(); // Initialize classes
             LoadMockAttendance();
         }
 
@@ -22,68 +35,260 @@ namespace TeacherDashboard.Controls
 
             // 1. Header
             Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(173, 22, 37), Padding = new Padding(20, 0, 20, 0) };
-            Label lblMainTitle = new Label() { Text = "ATTENDANCE TRACKER", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(20, 18) };
-            pnlHeader.Controls.Add(lblMainTitle);
+            Label lblMainTitle = new Label() { Text = "ATTENDANCE TRACKER", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(25, 18) };
+            
+            this.lblCurrentClassDisplay = new Label() { 
+                Name = "lblCurrentClassDisplay",
+                Text = "MARKING: SELECT FILTERS", 
+                Font = new Font("Segoe UI", 11, FontStyle.Bold), 
+                ForeColor = Color.FromArgb(241, 196, 15), 
+                Dock = DockStyle.Right,
+                TextAlign = ContentAlignment.MiddleRight,
+                AutoSize = false,
+                Width = 450,
+                Padding = new Padding(0, 0, 25, 0)
+            };
+            
+            pnlHeader.Controls.AddRange(new Control[] { lblCurrentClassDisplay, lblMainTitle });
             this.Controls.Add(pnlHeader);
 
-            // 2. Action Bar
-            Panel pnlActions = new Panel() { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(20, 10, 20, 10) };
-            Label lblD = new Label() { Text = "DATE:", Location = new Point(25, 22), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.White };
-            DateTimePicker dtp = new DateTimePicker() { Location = new Point(75, 18), Width = 150 };
-            Label lblC = new Label() { Text = "CLASS:", Location = new Point(250, 22), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.White };
-            ComboBox cmb = new ComboBox() { Location = new Point(310, 18), Width = 120 };
-            cmb.Items.AddRange(new string[] { "FY-BSCIT", "SY-BSCIT", "TY-BSCIT" });
-            cmb.SelectedIndex = 0;
-            Button btnSave = new Button() { Text = "✔ SAVE", Location = new Point(450, 12), Size = new Size(120, 35), BackColor = Color.FromArgb(173, 22, 37), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
+            // 2. Advanced Action Bar (Filters)
+            Panel pnlActions = new Panel() { Dock = DockStyle.Top, Height = 100, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(20, 10, 20, 10) };
+            
+            FlowLayoutPanel flpFilters = new FlowLayoutPanel() { Dock = DockStyle.Fill, WrapContents = true };
+            
+            // Filter Groups
+            flpFilters.Controls.Add(CreateFilterGroup("DATE", new DateTimePicker() { Width = 130 }));
+            
+            ComboBox cmbMonth = CreateStyledComboBox(new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }, 110, Point.Empty);
+            flpFilters.Controls.Add(CreateFilterGroup("MONTH", cmbMonth));
+
+            ComboBox cmbYear = CreateStyledComboBox(new string[] { "2024", "2025", "2026" }, 70, Point.Empty);
+            flpFilters.Controls.Add(CreateFilterGroup("YEAR", cmbYear));
+
+            cmbDept = CreateStyledComboBox(new string[] { "B.Sc IT", "B.Sc CS", "BMS", "B.Com" }, 110, Point.Empty);
+            flpFilters.Controls.Add(CreateFilterGroup("DEPT", cmbDept));
+            
+            cmbClass = CreateStyledComboBox(new string[] { "FY", "SY", "TY" }, 80, Point.Empty);
+            flpFilters.Controls.Add(CreateFilterGroup("CLASS", cmbClass));
+            
+            cmbDiv = CreateStyledComboBox(new string[] { "Div A", "Div B", "Div C" }, 80, Point.Empty);
+            flpFilters.Controls.Add(CreateFilterGroup("DIV", cmbDiv));
+
+            Button btnFilter = new Button() { Text = "🔍 APPLY FILTER", Size = new Size(130, 32), BackColor = Color.FromArgb(46, 204, 113), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 8, FontStyle.Bold), Margin = new Padding(10, 5, 0, 0) };
+            btnFilter.FlatAppearance.BorderSize = 0;
+            flpFilters.Controls.Add(btnFilter);
+
+            Button btnSave = new Button() { Text = "✔ SAVE ATTENDANCE", Size = new Size(150, 32), BackColor = Color.FromArgb(173, 22, 37), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 8, FontStyle.Bold), Margin = new Padding(10, 5, 0, 0) };
             btnSave.FlatAppearance.BorderSize = 0;
-            pnlActions.Controls.AddRange(new Control[] { lblD, dtp, lblC, cmb, btnSave });
+            flpFilters.Controls.Add(btnSave);
+
+            pnlActions.Controls.Add(flpFilters);
             this.Controls.Add(pnlActions);
+            
+            // Interaction Logic
+            cmbDept.SelectedIndexChanged += (s, e) => { UpdateClassMapping(); UpdateHeaderLabel(); };
+            cmbClass.SelectedIndexChanged += (s, e) => UpdateHeaderLabel();
+            cmbDiv.SelectedIndexChanged += (s, e) => UpdateHeaderLabel();
+            btnFilter.Click += (s, e) => LoadMockAttendance();
+
+            Panel pnlScroll = new Panel() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(0, 0, 0, 20) };
+            this.Controls.Add(pnlScroll);
 
             // 3. Grid (Primary)
             this.dgvAttendance = new DataGridView() { 
                 Dock = DockStyle.Top, 
-                Height = 300,
+                Height = 350,
                 BackgroundColor = Color.FromArgb(28, 28, 28), 
                 BorderStyle = BorderStyle.None,
                 ColumnHeadersHeight = 40,
                 EnableHeadersVisualStyles = false,
-                GridColor = Color.FromArgb(45, 45, 45)
+                GridColor = Color.FromArgb(45, 45, 45),
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                RowHeadersVisible = false
             };
             this.dgvAttendance.DefaultCellStyle.BackColor = Color.White;
+            this.dgvAttendance.DefaultCellStyle.ForeColor = Color.Black;
             this.dgvAttendance.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
             this.dgvAttendance.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            this.Controls.Add(this.dgvAttendance);
+            pnlScroll.Controls.Add(this.dgvAttendance);
 
-            // 4. Fill Bottom with Insights and Defaulters
-            Panel pnlBottom = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(18, 18, 18), Padding = new Padding(25) };
-            this.Controls.Add(pnlBottom);
+            // 4. BOTTOM SECTION: Analytics Dashboard
+            TableLayoutPanel tlpBottom = new TableLayoutPanel() { 
+                Dock = DockStyle.Top, 
+                Height = 350, 
+                ColumnCount = 4, 
+                RowCount = 2,
+                BackColor = Color.FromArgb(18, 18, 18),
+                Padding = new Padding(20)
+            };
+            tlpBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 270)); // Pie
+            tlpBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180)); // Legend
+            tlpBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));   // Defaulters List
+            tlpBottom.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));   // Merit List
+            
+            pnlScroll.Controls.Add(tlpBottom);
 
-            Label lblStatHead = new Label() { Text = "MONTHLY ATTENDANCE INSIGHTS", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Top, Height = 40 };
-            pnlBottom.Controls.Add(lblStatHead);
+            Label lblPerfTitle = new Label() { Text = "CLASS ATTENDANCE PERFORMANCE", Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Margin = new Padding(0, 0, 0, 10) };
+            tlpBottom.Controls.Add(lblPerfTitle, 0, 0);
+            tlpBottom.SetColumnSpan(lblPerfTitle, 2);
 
-            FlowLayoutPanel flpStats = new FlowLayoutPanel() { Dock = DockStyle.Top, Height = 120, WrapContents = false };
-            flpStats.Controls.Add(CreateInsightBox("Avg. Attendance", "88%", Color.FromArgb(46, 204, 113)));
-            flpStats.Controls.Add(CreateInsightBox("Defaulter Count", "12", Color.FromArgb(231, 76, 60)));
-            flpStats.Controls.Add(CreateInsightBox("Top Class", "TY-BSCIT", Color.FromArgb(52, 152, 219)));
-            pnlBottom.Controls.Add(flpStats);
+            // Pie Chart Panel
+            this.pnlPie = new Panel() { Size = new Size(240, 240), BackColor = Color.FromArgb(18, 18, 18), Margin = new Padding(0) };
+            this.pnlPie.Paint += PnlPie_Paint;
+            tlpBottom.Controls.Add(this.pnlPie, 0, 1);
 
-            Label lblDefHead = new Label() { Text = "DEFAULTERS WATCHLIST (Below 75%)", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.FromArgb(231, 76, 60), Dock = DockStyle.Top, Height = 30, Margin = new Padding(0, 20, 0, 0) };
-            pnlBottom.Controls.Add(lblDefHead);
+            // Legend Panel
+            this.pnlLegend = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(18, 18, 18), Margin = new Padding(10, 0, 0, 0) };
+            UpdateLegend();
+            tlpBottom.Controls.Add(this.pnlLegend, 1, 1);
 
-            FlowLayoutPanel flpDefaulters = new FlowLayoutPanel() { Dock = DockStyle.Fill, AutoScroll = true };
-            string[] defaulters = { "Amit Mishra (64%)", "Suresh Raina (72%)", "Deepak Hooda (68%)", "Krunal Pandya (70%)" };
-            foreach (var d in defaulters)
-            {
-                Label l = new Label() { Text = "⚠ " + d, ForeColor = Color.LightGray, Font = new Font("Segoe UI", 9), Size = new Size(250, 25), Margin = new Padding(0, 5, 0, 0) };
-                flpDefaulters.Controls.Add(l);
-            }
-            pnlBottom.Controls.Add(flpDefaulters);
+            // Defaulters List Panel
+            Panel pnlDefaultersContainer = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(15), Margin = new Padding(15, 0, 0, 0) };
+            lblDefTitle = new Label() { Text = "MONTHLY DEFAULTERS", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.FromArgb(231, 76, 60), Dock = DockStyle.Top, Height = 35 };
+            lstMonthlyDef = new ListBox() { 
+                Dock = DockStyle.Fill, 
+                BackColor = Color.FromArgb(32, 33, 36), 
+                ForeColor = Color.FromArgb(200, 200, 200), 
+                BorderStyle = BorderStyle.None, 
+                Font = new Font("Segoe UI", 10),
+                ItemHeight = 28
+            };
+            pnlDefaultersContainer.Controls.AddRange(new Control[] { lstMonthlyDef, lblDefTitle });
+            tlpBottom.Controls.Add(pnlDefaultersContainer, 2, 0);
+            tlpBottom.SetRowSpan(pnlDefaultersContainer, 2);
+
+            // Merit List Panel
+            Panel pnlMeritContainer = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(15), Margin = new Padding(15, 0, 0, 0) };
+            lblMeritTitle = new Label() { Text = "ATTENDANCE MERIT LIST", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.FromArgb(46, 204, 113), Dock = DockStyle.Top, Height = 35 };
+            lstMerit = new ListBox() { 
+                Dock = DockStyle.Fill, 
+                BackColor = Color.FromArgb(32, 33, 36), 
+                ForeColor = Color.FromArgb(200, 200, 200), 
+                BorderStyle = BorderStyle.None, 
+                Font = new Font("Segoe UI", 10),
+                ItemHeight = 28
+            };
+            pnlMeritContainer.Controls.AddRange(new Control[] { lstMerit, lblMeritTitle });
+            tlpBottom.Controls.Add(pnlMeritContainer, 3, 0);
+            tlpBottom.SetRowSpan(pnlMeritContainer, 2);
 
             // Force Strict Docking Priority
-            this.Controls.SetChildIndex(pnlHeader, 3);    // Docks First (Top)
-            this.Controls.SetChildIndex(pnlActions, 2);   // Docks Second (Top)
-            this.Controls.SetChildIndex(dgvAttendance, 1);// Docks Third (Top)
-            this.Controls.SetChildIndex(pnlBottom, 0);    // Docks Last (Fill)
+            this.Controls.SetChildIndex(pnlHeader, 2);    // Top
+            this.Controls.SetChildIndex(pnlActions, 1);   // Second Top
+            this.Controls.SetChildIndex(pnlScroll, 0);    // Fill
+        }
+
+        private void UpdateClassMapping()
+        {
+            string dept = cmbDept.SelectedItem?.ToString();
+            cmbClass.Items.Clear();
+            if (dept == "B.Sc IT" || dept == "B.Sc CS")
+                cmbClass.Items.AddRange(new string[] { "FY", "SY", "TY" });
+            else
+                cmbClass.Items.AddRange(new string[] { "FY", "SY" }); // Diploma/Others usually 2 years in this mock
+            cmbClass.SelectedIndex = 0;
+        }
+
+        private void UpdateHeaderLabel()
+        {
+            if (lblCurrentClassDisplay != null)
+            {
+                lblCurrentClassDisplay.Text = $"MARKING: {cmbDept.SelectedItem} | {cmbClass.SelectedItem} | {cmbDiv.SelectedItem}";
+            }
+        }
+
+        private void UpdateLegend()
+        {
+            if (pnlLegend == null) return;
+            pnlLegend.Controls.Clear();
+            AddLegendItem(pnlLegend, "Regular (>= 75%)", Color.FromArgb(46, 204, 113), 0);
+            AddLegendItem(pnlLegend, "Defaulters (< 75%)", Color.FromArgb(231, 76, 60), 1);
+        }
+
+        private void AddLegendItem(Panel parent, string text, Color color, int index)
+        {
+            Panel pAccent = new Panel() { Size = new Size(15, 15), Location = new Point(0, 10 + (index * 30)), BackColor = color };
+            Label lbl = new Label() { Text = text, ForeColor = Color.White, Font = new Font("Segoe UI", 9), Location = new Point(25, 8 + (index * 30)), AutoSize = true };
+            parent.Controls.AddRange(new Control[] { pAccent, lbl });
+        }
+
+        private void PnlPie_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            
+            float[] values = { regularPercent, defaulterPercent }; 
+            Color[] colors = { Color.FromArgb(46, 204, 113), Color.FromArgb(231, 76, 60) };
+            
+            float total = regularPercent + defaulterPercent;
+            if (total == 0) return;
+
+            float startAngle = 0;
+            Rectangle rect = new Rectangle(10, 10, 220, 220);
+            
+            for (int i = 0; i < values.Length; i++)
+            {
+                float sweepAngle = (values[i] / total) * 360;
+                using (SolidBrush b = new SolidBrush(colors[i]))
+                {
+                    g.FillPie(b, rect, startAngle, sweepAngle);
+                }
+                startAngle += sweepAngle;
+            }
+
+            // Draw Inner Circle for Donut Effect
+            using (SolidBrush b = new SolidBrush(Color.FromArgb(18, 18, 18)))
+            {
+                g.FillEllipse(b, 60, 60, 120, 120);
+            }
+
+            string avgText = regularPercent.ToString("0") + "%";
+            g.DrawString(avgText, new Font("Segoe UI", 18, FontStyle.Bold), Brushes.White, 85, 95);
+            g.DrawString("AVG REG.", new Font("Segoe UI", 8, FontStyle.Bold), Brushes.Gray, 92, 135);
+        }
+
+        private Panel CreateFilterGroup(string label, Control input)
+        {
+            Panel p = new Panel() { Width = input.Width, Height = 55, Margin = new Padding(0, 0, 15, 0) };
+            Label l = new Label() { Text = label, Font = new Font("Segoe UI", 7, FontStyle.Bold), ForeColor = Color.DarkGray, Dock = DockStyle.Top, Height = 20 };
+            input.Dock = DockStyle.Top;
+            input.Font = new Font("Segoe UI", 10);
+            p.Controls.Add(input);
+            p.Controls.Add(l);
+            return p;
+        }
+
+        private ComboBox CreateStyledComboBox(string[] items, int width, Point location)
+        {
+            ComboBox cmb = new ComboBox() { 
+                Width = width, 
+                BackColor = Color.FromArgb(45, 45, 48), 
+                ForeColor = Color.White, 
+                FlatStyle = FlatStyle.Flat,
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cmb.Items.AddRange(items);
+            cmb.SelectedIndex = 0;
+            return cmb;
+        }
+
+        private Panel CreateDefaulterList(string dept, string[] list, Color accent)
+        {
+            Panel p = new Panel() { Size = new Size(240, 180), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 15, 15) };
+            Panel l = new Panel() { Dock = DockStyle.Left, Width = 4, BackColor = accent };
+            Label lblT = new Label() { Text = dept.ToUpper(), Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = accent, Location = new Point(15, 15), AutoSize = true };
+            
+            int y = 45;
+            foreach (var name in list)
+            {
+                Label lblStudent = new Label() { Text = "• " + name, Font = new Font("Segoe UI", 9), ForeColor = Color.LightGray, Location = new Point(15, y), Size = new Size(210, 20) };
+                p.Controls.Add(lblStudent);
+                y += 25;
+            }
+            
+            p.Controls.AddRange(new Control[] { l, lblT });
+            return p;
         }
 
         private Panel CreateInsightBox(string title, string val, Color accent)
@@ -98,21 +303,61 @@ namespace TeacherDashboard.Controls
 
         private void LoadMockAttendance()
         {
+            if (cmbDept.SelectedItem == null || cmbClass.SelectedItem == null || cmbDiv.SelectedItem == null) return;
+
+            string dept = cmbDept.SelectedItem.ToString();
+            string cls = cmbClass.SelectedItem.ToString();
+            string div = cmbDiv.SelectedItem.ToString();
+            string context = $"{dept} {cls} {div}";
+
+            lblDefTitle.Text = $"MONTHLY DEFAULTERS ({context})";
+            lblMeritTitle.Text = $"MERIT LIST (>= 90%) ({context})";
+            
+            // 1. Update Pie Chart Statistics based on Dept/Div
+            if (dept == "B.Sc IT") { defaulterPercent = 12; regularPercent = 88; }
+            else if (dept == "B.Sc CS") { defaulterPercent = 18; regularPercent = 82; }
+            else { defaulterPercent = 25; regularPercent = 75; }
+            
+            if (div == "Div C") { defaulterPercent += 10; regularPercent -= 10; } // Div C usually more defaulters in mock data
+
+            this.pnlPie?.Invalidate(); 
+
+            // 2. Name Pool & Deterministic Mock Data
+            string[] namesIT = { "Arjun Rao", "Neha Verma", "Vikrant Singh", "Pooja Hegde", "Kabir Khan", "Isha Deshmukh", "Sameer Naik" };
+            string[] namesCS = { "Siddharth Malra", "Riya Sen", "Armaan Jain", "Tara Sutaria", "Varun Dhawan", "Kriti Sanon" };
+            string[] activePool = (dept == "B.Sc IT") ? namesIT : namesCS;
+
+            // 3. Populate Defaulter List
+            lstMonthlyDef.Items.Clear();
+            lstMonthlyDef.Items.Add($"• {activePool[0]} - 62%");
+            lstMonthlyDef.Items.Add($"• {activePool[1]} - 68%");
+
+            // 4. Populate Merit List
+            lstMerit.Items.Clear();
+            lstMerit.Items.Add($"⭐ {activePool[activePool.Length - 1]} - 98%");
+            lstMerit.Items.Add($"⭐ {activePool[activePool.Length - 2]} - 94%");
+
+            // 5. Populate Attendance Grid
             DataTable dt = new DataTable();
             dt.Columns.Add("Roll No");
             dt.Columns.Add("Student Name");
-            dt.Columns.Add("Status", typeof(bool));
+            dt.Columns.Add("Attendance Status", typeof(bool));
 
-            dt.Rows.Add("1", "Rahul Sharma", true);
-            dt.Rows.Add("2", "Priya Patel", true);
-            dt.Rows.Add("3", "Amit Mishra", false);
-            dt.Rows.Add("4", "Sneha Rao", true);
-            dt.Rows.Add("5", "Vikram Singh", true);
+            for (int i = 0; i < activePool.Length; i++)
+            {
+                bool isPresent = (i < activePool.Length - 2); // Mostly present
+                dt.Rows.Add((i + 1).ToString(), activePool[i], isPresent);
+            }
 
             if (this.dgvAttendance != null)
             {
                 this.dgvAttendance.DataSource = dt;
                 this.dgvAttendance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                
+                if(dgvAttendance.Columns.Count > 2 && dgvAttendance.Columns[2] is DataGridViewCheckBoxColumn)
+                {
+                    dgvAttendance.Columns[2].HeaderText = "MARK PRESENT";
+                }
             }
         }
     }

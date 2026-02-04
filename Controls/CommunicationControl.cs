@@ -2,114 +2,228 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace TeacherDashboard.Controls
 {
     public partial class CommunicationControl : UserControl
     {
+        // Theme Colors
+        private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
+        private Color bgColor = Color.FromArgb(18, 18, 18);
+        private Color cardBg = Color.FromArgb(30, 30, 33);
+        private Color borderColor = Color.FromArgb(45, 45, 48);
+
+        // UI Components
+        private DataGridView dgvNotices;
+        private DataTable dtNotices;
+        
+        // Detail Controls
+        private Label lblSelectedSubject;
+        private Label lblSelectedMeta;
+        private TextBox txtSelectedBody;
+        private Panel pnlBottomDetail;
+
         public CommunicationControl()
         {
             InitializeComponent();
-            SetupStrictLayout();
-            LoadMessages();
+            SetupData();
+            SetupStrictNonOverlappingLayout();
+            if (dgvNotices.Rows.Count > 0) UpdateDetailDisplay(0);
         }
 
-        private void SetupStrictLayout()
+        private void SetupData()
         {
+            dtNotices = new DataTable();
+            dtNotices.Columns.Add("Date");
+            dtNotices.Columns.Add("Type");
+            dtNotices.Columns.Add("Subject");
+            dtNotices.Columns.Add("From");
+
+            dtNotices.Rows.Add("Feb 03", "MEETING", "Urgent Faculty Meeting: Exam Duty Allocation", "Principal Office");
+            dtNotices.Rows.Add("Feb 04", "ADMIN", "Internal Marks Deadline - Semester IV", "Exam Dept");
+            dtNotices.Rows.Add("Feb 05", "MEETING", "Research Committee: Weekly Review", "HOD - BSc IT");
+            dtNotices.Rows.Add("Feb 06", "NOTICE", "Maintenance: IT Lab 3 Internet Downtime", "Sys Admin");
+        }
+
+        private void SetupStrictNonOverlappingLayout()
+        {
+            // 1. CLEAR AND RESET
             this.Controls.Clear();
-            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.BackColor = bgColor;
+            this.Dock = DockStyle.Fill;
+            this.Padding = new Padding(0);
 
-            // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(173, 22, 37) };
-            Label lblMainTitle = new Label() { Text = "COMMUNICATION HUB", Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(25, 15) };
-            pnlHeader.Controls.Add(lblMainTitle);
-            this.Controls.Add(pnlHeader);
+            // 2. MAIN FLOW (GUARANTEES TOP-TO-BOTTOM ORDER WITH NO OVERLAPS)
+            FlowLayoutPanel flpMain = new FlowLayoutPanel() {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoScroll = true,
+                BackColor = bgColor
+            };
+            this.Controls.Add(flpMain);
 
-            // 2. Toolbar & Category Explorer
-            Panel pnlToolbar = new Panel() { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(20, 10, 20, 10) };
-            Button btnNew = new Button() { Text = "✉ SEND NEW MESSAGE", Location = new Point(20, 12), Size = new Size(180, 35), BackColor = Color.FromArgb(173, 22, 37), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
-            btnNew.FlatAppearance.BorderSize = 0;
+            // --- SECTION 1: HEADER ---
+            Panel pnlHeader = new Panel() { Width = 1100, Height = 80, BackColor = Color.FromArgb(25, 25, 25) };
+            Label lblHeaderTitle = new Label() { 
+                Text = "📩 OFFICE COMMUNICATION & MEETING HUB", 
+                Font = new Font("Segoe UI", 20, FontStyle.Bold), 
+                ForeColor = Color.White, 
+                Location = new Point(30, 22), 
+                AutoSize = true 
+            };
+            pnlHeader.Controls.Add(lblHeaderTitle);
+            Panel pnlRedLine = new Panel() { Dock = DockStyle.Bottom, Height = 4, BackColor = primaryColor };
+            pnlHeader.Controls.Add(pnlRedLine);
+            flpMain.Controls.Add(pnlHeader);
+
+            // --- SECTION 2: LIST OF NOTICES (DATA GRID) ---
+            flpMain.Controls.Add(CreateSectionLabel("ADMIN BROADCASTS & MEETING LIST (Click to View)"));
             
-            FlowLayoutPanel flpCats = new FlowLayoutPanel() { Location = new Point(220, 15), Size = new Size(600, 40) };
-            string[] cats = { "INBOX", "SENT", "URGENT", "ARCHIVE" };
-            foreach (var cat in cats)
-            {
-                Button b = new Button() { Text = cat, AutoSize = true, FlatStyle = FlatStyle.Flat, ForeColor = Color.LightGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Margin = new Padding(10, 0, 0, 0) };
-                b.FlatAppearance.BorderSize = 0;
-                flpCats.Controls.Add(b);
-            }
-            
-            pnlToolbar.Controls.AddRange(new Control[] { btnNew, flpCats });
-            this.Controls.Add(pnlToolbar);
+            Panel pnlGridWrap = new Panel() { Width = 1000, Height = 250, BackColor = cardBg, Margin = new Padding(30, 0, 0, 20), Padding = new Padding(1) };
+            dgvNotices = CreateStyledGrid(dtNotices);
+            dgvNotices.CellClick += (s, e) => { if (e.RowIndex >= 0) UpdateDetailDisplay(e.RowIndex); };
+            pnlGridWrap.Controls.Add(dgvNotices);
+            flpMain.Controls.Add(pnlGridWrap);
 
-            // 3. Main Splitter
-            SplitContainer mainSplit = new SplitContainer() { Dock = DockStyle.Fill, SplitterDistance = 400, Padding = new Padding(20) };
-            this.Controls.Add(mainSplit);
+            // --- SECTION 3: DETAILED VIEW (THE PANEL BELOW) ---
+            flpMain.Controls.Add(CreateSectionLabel("MESSAGE / MEETING CONTENT"));
 
-            // Left: Inbox List + Pinned
-            Panel pnlInbox = new Panel() { Dock = DockStyle.Fill };
-            Label lblIn = new Label() { Text = "RECENT CONVERSATIONS", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.DimGray, Dock = DockStyle.Top, Height = 30 };
-            pnlInbox.Controls.Add(lblIn);
+            pnlBottomDetail = new Panel() { 
+                Width = 1000, 
+                Height = 350, 
+                BackColor = cardBg, 
+                Margin = new Padding(30, 0, 0, 50), 
+                Padding = new Padding(25) 
+            };
+            pnlBottomDetail.Paint += (s, e) => DrawBorder(e.Graphics, pnlBottomDetail.ClientRectangle);
 
-            this.dgvMessages = new DataGridView() { 
+            lblSelectedSubject = new Label() { 
+                Text = "Subject Label", 
+                Font = new Font("Segoe UI", 16, FontStyle.Bold), 
+                ForeColor = Color.White, 
                 Dock = DockStyle.Top, 
-                Height = 350,
-                BackgroundColor = Color.FromArgb(28, 28, 28), 
-                BorderStyle = BorderStyle.None,
-                EnableHeadersVisualStyles = false,
-                ColumnHeadersHeight = 40,
-                GridColor = Color.FromArgb(45, 45, 45)
+                Height = 40 
             };
-            this.dgvMessages.DefaultCellStyle.BackColor = Color.White;
-            mainSplit.Panel1.Controls.Add(pnlInbox);
-            pnlInbox.Controls.Add(this.dgvMessages);
-
-            // Right: Reader + Quick Reply Placeholder
-            Panel pnlReader = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(25) };
-            Label lblMsgHead = new Label() { Text = "MESSAGE PREVIEW", Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 40, ForeColor = Color.White };
-            pnlReader.Controls.Add(lblMsgHead);
             
-            Panel pnlContent = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(28, 28, 28), Padding = new Padding(20) };
-            Label lblContent = new Label() { 
-                Text = "Select a message to view details.\n\nYou can quick-reply or flag important communications here.\n\nNote: Attachments are scanned for security before download.", 
-                Font = new Font("Segoe UI", 10), 
-                Dock = DockStyle.Fill, 
-                ForeColor = Color.FromArgb(180, 180, 180) 
+            lblSelectedMeta = new Label() { 
+                Text = "Meta Data Label", 
+                Font = new Font("Segoe UI", 10, FontStyle.Italic), 
+                ForeColor = primaryColor, 
+                Dock = DockStyle.Top, 
+                Height = 30 
             };
-            pnlContent.Controls.Add(lblContent);
-            pnlReader.Controls.Add(pnlContent);
 
-            // Related Feature: Quick Send Panel at bottom of reader
-            Panel pnlQuickSend = new Panel() { Dock = DockStyle.Bottom, Height = 120, BackColor = Color.FromArgb(45, 45, 45), Padding = new Padding(15) };
-            pnlQuickSend.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = "Type a quick reply...", ForeColor = Color.Gray });
-            Button btnSend = new Button() { Text = "SEND ➔", Dock = DockStyle.Right, Width = 80, BackColor = Color.FromArgb(173, 22, 37), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
-            pnlQuickSend.Controls.Add(btnSend);
-            pnlReader.Controls.Add(pnlQuickSend);
+            txtSelectedBody = new TextBox() { 
+                Multiline = true, 
+                ReadOnly = true, 
+                BackColor = cardBg, 
+                ForeColor = Color.LightGray, 
+                BorderStyle = BorderStyle.None, 
+                Font = new Font("Segoe UI", 11), 
+                Dock = DockStyle.Fill,
+                ScrollBars = ScrollBars.Vertical
+            };
 
-            mainSplit.Panel2.Controls.Add(pnlReader);
+            pnlBottomDetail.Controls.Add(txtSelectedBody);
+            pnlBottomDetail.Controls.Add(lblSelectedMeta);
+            pnlBottomDetail.Controls.Add(lblSelectedSubject);
+            
+            flpMain.Controls.Add(pnlBottomDetail);
 
-            // Force Strict Docking Priority
-            this.Controls.SetChildIndex(pnlHeader, 2);  // Docks First (Top)
-            this.Controls.SetChildIndex(pnlToolbar, 1); // Docks Second (Top)
-            this.Controls.SetChildIndex(mainSplit, 0);  // Docks Last (Fill)
+            // Handle Resizing
+            this.Resize += (s, e) => {
+                int targetWidth = this.Width - 60;
+                pnlHeader.Width = this.Width;
+                pnlGridWrap.Width = targetWidth;
+                pnlBottomDetail.Width = targetWidth;
+            };
         }
 
-        private void LoadMessages()
+        private void UpdateDetailDisplay(int idx)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Date");
-            dt.Columns.Add("From/To");
-            dt.Columns.Add("Subject");
+            DataRow row = dtNotices.Rows[idx];
+            string subject = row["Subject"].ToString();
+            string from = row["From"].ToString();
+            string date = row["Date"].ToString();
+            string type = row["Type"].ToString();
 
-            dt.Rows.Add("2026-01-31", "Principal's Office", "Faculty Meeting");
-            dt.Rows.Add("2026-01-30", "Exam Dept", "Marksheets Ready");
-            dt.Rows.Add("2026-01-28", "Student Council", "Event Request");
+            lblSelectedSubject.Text = subject.ToUpper();
+            lblSelectedMeta.Text = $"📢 {type} | FROM: {from} | DATE: {date}";
 
-            if (this.dgvMessages != null)
+            if (type == "MEETING")
             {
-                this.dgvMessages.DataSource = dt;
-                this.dgvMessages.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                txtSelectedBody.Text = "OFFICIAL MEETING INVITATION\r\n" +
+                                       "--------------------------------------------------\r\n" +
+                                       "📌 VENUE: Faculty Conference Hall (Level 2)\r\n" +
+                                       "⏰ TIME: 11:30 AM Sharp\r\n" +
+                                       "--------------------------------------------------\r\n\r\n" +
+                                       "Agenda:\r\n" +
+                                       "1. Finalization of Internal Examination schedules.\r\n" +
+                                       "2. Review of student attendance for Semester IV.\r\n" +
+                                       "3. Preparation for upcoming Institutional Audit.\r\n\r\n" +
+                                       "Your physical presence is mandatory. Please mark your attendance at the entrance.";
+            }
+            else
+            {
+                txtSelectedBody.Text = "ADMINISTRATIVE NOTICE\r\n" +
+                                       "--------------------------------------------------\r\n\r\n" +
+                                       "Instructions:\r\n" +
+                                       "Please be advised that the deadline for uploading internal marks is approaching. \r\n" +
+                                       "Ensure all data is cross-verified for accuracy before final submission into the system.\r\n\r\n" +
+                                       "Contact the Exam Department for any credential-related issues.\r\n\r\n" +
+                                       "Regards,\r\n" + from;
             }
         }
+
+        private Label CreateSectionLabel(string text)
+        {
+            return new Label() { 
+                Text = "──  " + text, 
+                Font = new Font("Segoe UI", 10, FontStyle.Bold), 
+                ForeColor = primaryColor, 
+                Width = 1000, 
+                Height = 40, 
+                TextAlign = ContentAlignment.BottomLeft,
+                Margin = new Padding(30, 20, 0, 10)
+            };
+        }
+
+        private DataGridView CreateStyledGrid(DataTable dt)
+        {
+            DataGridView d = new DataGridView() { 
+                Dock = DockStyle.Fill, 
+                DataSource = dt, 
+                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BorderStyle = BorderStyle.None, 
+                ForeColor = Color.White, 
+                GridColor = Color.FromArgb(50, 50, 50), 
+                RowTemplate = { Height = 40 }, 
+                ColumnHeadersHeight = 45, 
+                AllowUserToAddRows = false, 
+                ReadOnly = true,
+                RowHeadersVisible = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                EnableHeadersVisualStyles = false,
+                MultiSelect = false
+            };
+            d.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48); 
+            d.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; 
+            d.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            d.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36); 
+            d.DefaultCellStyle.SelectionBackColor = primaryColor;
+            d.DefaultCellStyle.SelectionForeColor = Color.White;
+            d.DefaultCellStyle.Padding = new Padding(10, 0, 0, 0);
+            return d;
+        }
+
+        private void DrawBorder(Graphics g, Rectangle r) {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (Pen pen = new Pen(borderColor, 1)) g.DrawRectangle(pen, r.X, r.Y, r.Width - 1, r.Height - 1);
+        }
+
+        // InitializeComponent is in Designer.cs
     }
 }
