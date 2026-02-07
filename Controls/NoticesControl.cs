@@ -9,11 +9,11 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18); // Dark BG
-        private Color cardBg = Color.FromArgb(32, 33, 36); // Card BG
-        private Color textColor = Color.White;
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color textColor = Color.FromArgb(40, 40, 40);
         private Color placeholderColor = Color.Gray;
-        private Color borderColor = Color.FromArgb(60, 60, 60);
+        private Color borderColor = Color.FromArgb(220, 220, 220);
 
         public NoticesControl()
         {
@@ -29,11 +29,11 @@ namespace TeacherDashboard.Controls
             this.Font = new Font("Segoe UI", 11);
 
             // 1. Fixed Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(25, 25, 25) };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.White };
             Label lblHeaderTitle = new Label() { 
                 Text = "📢  POST NOTICES", 
                 Font = new Font("Segoe UI", 18, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = primaryColor, 
                 AutoSize = true, 
                 Location = new Point(30, 18) 
             };
@@ -191,7 +191,7 @@ namespace TeacherDashboard.Controls
         private void AddDropdown(TableLayoutPanel parent, string labelText, string[] items, int col)
         {
             Panel container = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(0, 0, 20, 0) };
-            Label lbl = new Label() { Text = labelText, Font = new Font("Segoe UI", 8), ForeColor = placeholderColor, Location = new Point(5, 0), AutoSize = true };
+            Label lbl = new Label() { Text = labelText, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = primaryColor, Location = new Point(5, 0), AutoSize = true };
             
             Panel box = new Panel() { Location = new Point(0, 22), Height = 50, BackColor = cardBg };
             box.Paint += (s, e) => DrawBorder(e.Graphics, box.ClientRectangle, borderColor);
@@ -202,7 +202,7 @@ namespace TeacherDashboard.Controls
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 11),
                 BackColor = cardBg,
-                ForeColor = Color.White,
+                ForeColor = textColor,
                 Width = 350 // Will be resized
             };
             cb.Items.AddRange(items);

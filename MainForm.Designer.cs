@@ -41,11 +41,8 @@ namespace TeacherDashboard
 
             this.lblAdminSection = new System.Windows.Forms.Label();
             this.btnManageTeachers = new System.Windows.Forms.Button();
-            this.btnAnalytics = new System.Windows.Forms.Button();
-            this.btnFees = new System.Windows.Forms.Button();
-            this.btnInventory = new System.Windows.Forms.Button();
-            this.btnPlacement = new System.Windows.Forms.Button();
-            this.btnAlumni = new System.Windows.Forms.Button();
+            this.btnAdminTimetable = new System.Windows.Forms.Button();
+            this.btnAdminBroadcast = new System.Windows.Forms.Button();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnLogout = new System.Windows.Forms.Button();
 
@@ -79,7 +76,7 @@ namespace TeacherDashboard
             this.imgLogo.TabIndex = 0;
 
             // profileCard
-            this.profileCard.BackColor = System.Drawing.Color.FromArgb(40, 255, 255, 255);
+            this.profileCard.BackColor = System.Drawing.Color.Transparent;
             this.profileCard.Location = new System.Drawing.Point(15, 80);
             this.profileCard.Size = new System.Drawing.Size(220, 80); // Increased height slightly
             
@@ -87,7 +84,7 @@ namespace TeacherDashboard
                 Dock = System.Windows.Forms.DockStyle.Fill,
                 ColumnCount = 1,
                 RowCount = 2,
-                BackColor = System.Drawing.Color.FromArgb(40, 45, 50) // Solid dark match
+                BackColor = System.Drawing.Color.Transparent
             };
             tlpProfile.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 55f));
             tlpProfile.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45f));
@@ -100,7 +97,7 @@ namespace TeacherDashboard
             this.lblUserName.Text = "User Name";
 
             this.lblRole.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.lblRole.ForeColor = System.Drawing.Color.Silver;
+            this.lblRole.ForeColor = System.Drawing.Color.White;
             this.lblRole.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblRole.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lblRole.Text = "Academic Faculty";
@@ -109,7 +106,7 @@ namespace TeacherDashboard
             tlpProfile.Controls.Add(this.lblRole, 0, 1);
 
             // flpMenu
-            this.flpMenu.BackColor = System.Drawing.Color.FromArgb(25, 30, 35);
+            this.flpMenu.BackColor = System.Drawing.Color.FromArgb(173, 22, 37);
             this.flpMenu.Location = new System.Drawing.Point(0, 160);
             this.flpMenu.Size = new System.Drawing.Size(250, 740);
             this.flpMenu.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
@@ -139,15 +136,14 @@ namespace TeacherDashboard
             SetupMenuLabel(this.lblOperations, "OPERATIONS");      // Setup New Label
 
             SetupMenuLabel(this.lblAdminSection, "ADMINISTRATION");
-            SetupMenuButton(this.btnManageTeachers, "👥  Faculty Management", "MANAGE TEACHERS");
-            this.btnAdminTimetable = new System.Windows.Forms.Button(); // Instantiate
-            SetupMenuButton(this.btnAdminTimetable, "🗓️  Academic Scheduling", "ADMIN_TIMETABLE");
-            SetupMenuButton(this.btnAnalytics, "📈  Analytics", "ANALYTICS");
-            SetupMenuButton(this.btnFees, "💰  Fee Management", "FEES");
-            SetupMenuButton(this.btnInventory, "📦  Campus Management", "CAMPUS");
-            SetupMenuButton(this.btnPlacement, "📍  Placement Cell", "PLACEMENT");
-            SetupMenuButton(this.btnAlumni, "🎓  Alumni Network", "ALUMNI");
-
+            SetupMenuButton(this.btnManageTeachers, "👥  Manage Faculty", "MANAGE TEACHERS");
+            this.btnAdminTimetable = new System.Windows.Forms.Button(); 
+            SetupMenuButton(this.btnAdminTimetable, "🗓️  Master Timetable", "ADMIN_TIMETABLE");
+            SetupMenuButton(this.btnAdminBroadcast, "📢  Global Announcer", "ADMIN_BROADCAST");
+            this.btnAdminLeave = new System.Windows.Forms.Button(); 
+            SetupMenuButton(this.btnAdminLeave, "📝  Request Approvals", "ADMIN_LEAVE");
+            this.btnAdminFeedback = new System.Windows.Forms.Button();
+            SetupMenuButton(this.btnAdminFeedback, "💬  Quality & Grievance", "ADMIN_FEEDBACK");
             SetupMenuButton(this.btnSettings, "⚙️  Settings", "SETTINGS");
             SetupMenuButton(this.btnLogout, "🚪  Logout", "LOGOUT");
             this.btnLogout.ForeColor = System.Drawing.Color.FromArgb(255, 100, 100);
@@ -157,19 +153,19 @@ namespace TeacherDashboard
                 this.lblAcademic, this.btnDashboard, this.btnClasses, this.btnStudents, this.btnSyllabus, this.btnAttendance,
                 this.lblManagement, this.btnNotices, this.btnComm, this.btnQuiz, this.btnExams,
                 this.lblOperations, this.btnAssignments, this.btnResources, this.btnReports, this.btnLeave,
-                this.lblAdminSection, this.btnManageTeachers, this.btnAdminTimetable, this.btnAnalytics, this.btnFees, this.btnInventory, this.btnPlacement, this.btnAlumni,
+                this.lblAdminSection, this.btnManageTeachers, this.btnAdminTimetable, this.btnAdminBroadcast, this.btnAdminLeave, this.btnAdminFeedback,
                 this.btnSettings, this.btnLogout
             });
 
             // pnlHeader
-            this.pnlHeader.BackColor = System.Drawing.Color.FromArgb(32, 33, 36);
+            this.pnlHeader.BackColor = System.Drawing.Color.White;
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Fill;
             
             System.Windows.Forms.TableLayoutPanel tlpHeader = new System.Windows.Forms.TableLayoutPanel() {
                 Dock = System.Windows.Forms.DockStyle.Fill,
                 ColumnCount = 4,
                 RowCount = 1,
-                BackColor = System.Drawing.Color.FromArgb(32, 33, 36),
+                BackColor = System.Drawing.Color.White,
                 Padding = new System.Windows.Forms.Padding(0, 0, 15, 0)
             };
             tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50f));  // Toggle
@@ -182,14 +178,14 @@ namespace TeacherDashboard
                 Text = "☰",
                 Size = new System.Drawing.Size(50, 75),
                 FlatStyle = System.Windows.Forms.FlatStyle.Flat,
-                ForeColor = System.Drawing.Color.White,
+                ForeColor = System.Drawing.Color.FromArgb(173, 22, 37),
                 Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold),
                 Margin = new System.Windows.Forms.Padding(0)
             };
             this.btnToggleSidebar.FlatAppearance.BorderSize = 0;
             this.btnToggleSidebar.Click += new System.EventHandler(this.btnToggleSidebar_Click);
             this.lblCurrentView.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
-            this.lblCurrentView.ForeColor = System.Drawing.Color.White;
+            this.lblCurrentView.ForeColor = System.Drawing.Color.FromArgb(173, 22, 37);
             this.lblCurrentView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCurrentView.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblCurrentView.Text = "Dashboard";
@@ -201,7 +197,7 @@ namespace TeacherDashboard
             };
             System.Windows.Forms.TextBox txtSearchHeader = new System.Windows.Forms.TextBox() { 
                 Dock = System.Windows.Forms.DockStyle.Fill, 
-                BackColor = System.Drawing.Color.FromArgb(45, 45, 48), 
+                BackColor = System.Drawing.Color.FromArgb(245, 245, 245), 
                 ForeColor = System.Drawing.Color.Gray, 
                 BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle,
                 Font = new System.Drawing.Font("Segoe UI", 10),
@@ -214,14 +210,14 @@ namespace TeacherDashboard
                 Dock = System.Windows.Forms.DockStyle.Fill,
                 FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft,
                 WrapContents = false,
-                BackColor = System.Drawing.Color.FromArgb(32, 33, 36)
+                BackColor = System.Drawing.Color.White
             };
 
             // Exit Button
             this.btnExit.Size = new System.Drawing.Size(45, 75);
             this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit.FlatAppearance.BorderSize = 0;
-            this.btnExit.ForeColor = System.Drawing.Color.White;
+            this.btnExit.ForeColor = System.Drawing.Color.FromArgb(173, 22, 37);
             this.btnExit.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnExit.Text = "✕";
             this.btnExit.Margin = new System.Windows.Forms.Padding(0);
@@ -232,7 +228,7 @@ namespace TeacherDashboard
             this.btnMin.Size = new System.Drawing.Size(45, 75);
             this.btnMin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMin.FlatAppearance.BorderSize = 0;
-            this.btnMin.ForeColor = System.Drawing.Color.White;
+            this.btnMin.ForeColor = System.Drawing.Color.FromArgb(173, 22, 37);
             this.btnMin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnMin.Text = "—";
             this.btnMin.Margin = new System.Windows.Forms.Padding(0);
@@ -243,7 +239,7 @@ namespace TeacherDashboard
             this.btnMaximize.Size = new System.Drawing.Size(45, 75);
             this.btnMaximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnMaximize.FlatAppearance.BorderSize = 0;
-            this.btnMaximize.ForeColor = System.Drawing.Color.White;
+            this.btnMaximize.ForeColor = System.Drawing.Color.FromArgb(173, 22, 37);
             this.btnMaximize.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnMaximize.Text = "□";
             this.btnMaximize.Margin = new System.Windows.Forms.Padding(0);
@@ -255,37 +251,16 @@ namespace TeacherDashboard
                 }
                 else
                 {
-                    this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
                     this.btnMaximize.Text = "❐";
                 }
             };
-
-            // Notification Button
-            this.btnNotify = new System.Windows.Forms.Button() { 
-                Text = "🔔", Size = new System.Drawing.Size(45, 75), 
-                FlatStyle = System.Windows.Forms.FlatStyle.Flat, 
-                ForeColor = System.Drawing.Color.White, 
-                Font = new System.Drawing.Font("Segoe UI", 12),
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            this.btnNotify.FlatAppearance.BorderSize = 0;
-
-            // Refresh Button
-            this.btnRefresh = new System.Windows.Forms.Button() { 
-                Text = "🔄", Size = new System.Drawing.Size(45, 75), 
-                FlatStyle = System.Windows.Forms.FlatStyle.Flat, 
-                ForeColor = System.Drawing.Color.White, 
-                Font = new System.Drawing.Font("Segoe UI", 12),
-                Margin = new System.Windows.Forms.Padding(0)
-            };
-            this.btnRefresh.FlatAppearance.BorderSize = 0;
-            this.btnRefresh.Click += (s, e) => this.SwitchPanel("DASHBOARD");
 
             // Clock
             this.lblHeaderClock = new System.Windows.Forms.Label() { 
                 AutoSize = true,
                 Height = 75,
-                ForeColor = System.Drawing.Color.Silver, 
+                ForeColor = System.Drawing.Color.FromArgb(173, 22, 37), 
                 Font = new System.Drawing.Font("Segoe UI Semibold", 10), 
                 TextAlign = System.Drawing.ContentAlignment.MiddleRight,
                 Text = System.DateTime.Now.ToString("ddd, MMM dd | HH:mm"),
@@ -296,8 +271,7 @@ namespace TeacherDashboard
             flpRight.Controls.Add(this.btnExit);
             flpRight.Controls.Add(this.btnMaximize);
             flpRight.Controls.Add(this.btnMin);
-            flpRight.Controls.Add(this.btnNotify);
-            flpRight.Controls.Add(this.btnRefresh);
+
             flpRight.Controls.Add(this.lblHeaderClock);
 
             tlpHeader.Controls.Add(this.btnToggleSidebar, 0, 0);
@@ -306,7 +280,7 @@ namespace TeacherDashboard
             tlpHeader.Controls.Add(flpRight, 3, 0);
 
             // pnlContent
-            this.pnlContent.BackColor = System.Drawing.Color.FromArgb(18, 18, 18);
+            this.pnlContent.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
 
             // MainForm Reset
@@ -319,7 +293,7 @@ namespace TeacherDashboard
                 Dock = System.Windows.Forms.DockStyle.Fill, 
                 ColumnCount = 2, 
                 RowCount = 2,
-                BackColor = System.Drawing.Color.FromArgb(18, 18, 18)
+                BackColor = System.Drawing.Color.FromArgb(230, 230, 230)
             };
             masterCoordinator.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 250)); // Col 0: Sidebar
             masterCoordinator.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100));  // Col 1: Main Area
@@ -332,7 +306,7 @@ namespace TeacherDashboard
                 Dock = System.Windows.Forms.DockStyle.Fill,
                 ColumnCount = 1,
                 RowCount = 3,
-                BackColor = System.Drawing.Color.FromArgb(28, 40, 51)
+                BackColor = System.Drawing.Color.FromArgb(173, 22, 37)
             };
             sidebarStack.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80f));  // Logo Row
             sidebarStack.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100f)); // Profile Row
@@ -353,16 +327,14 @@ namespace TeacherDashboard
             this.masterCoordinator.SetRowSpan(pnlSidebar, 2); // Sidebar takes full height
 
             // pnlHeader
-            this.pnlHeader.BackColor = System.Drawing.Color.FromArgb(32, 33, 36);
+            this.pnlHeader.BackColor = System.Drawing.Color.White;
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlHeader.Height = 60;
-            this.pnlHeader.Controls.Add(this.lblCurrentView);
-            this.pnlHeader.Controls.Add(this.lblUserBadge);
-            this.pnlHeader.Controls.Add(this.btnExit);
+            this.pnlHeader.Height = 75; // Match row height
+            this.pnlHeader.Controls.Add(tlpHeader); // Main header layout contains everything properly
             this.masterCoordinator.Controls.Add(pnlHeader, 1, 0);
 
             // pnlContent
-            this.pnlContent.BackColor = System.Drawing.Color.FromArgb(18, 18, 18);
+            this.pnlContent.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlContent.AutoScroll = true; // Added Navigation Support (Scrollbars)
             this.masterCoordinator.Controls.Add(pnlContent, 1, 1);
@@ -397,7 +369,7 @@ namespace TeacherDashboard
         {
             lbl.Size = new System.Drawing.Size(250, 35);
             lbl.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
-            lbl.ForeColor = System.Drawing.Color.FromArgb(180, 255, 255, 255);
+            lbl.ForeColor = System.Drawing.Color.White;
             lbl.Padding = new System.Windows.Forms.Padding(20, 15, 0, 0);
             lbl.Text = text;
         }
@@ -427,19 +399,16 @@ namespace TeacherDashboard
         private System.Windows.Forms.Label lblAdminSection;
         private System.Windows.Forms.Button btnManageTeachers;
         private System.Windows.Forms.Button btnAdminTimetable;
-        private System.Windows.Forms.Button btnAnalytics;
-        private System.Windows.Forms.Button btnFees;
-        private System.Windows.Forms.Button btnInventory;
-        private System.Windows.Forms.Button btnPlacement;
-        private System.Windows.Forms.Button btnAlumni;
+        private System.Windows.Forms.Button btnAdminBroadcast;
+        private System.Windows.Forms.Button btnAdminLeave;
+        private System.Windows.Forms.Button btnAdminFeedback;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Label lblCurrentView;
         private System.Windows.Forms.Label lblUserBadge;
         internal System.Windows.Forms.Label lblHeaderClock;
-        private System.Windows.Forms.Button btnNotify;
-        private System.Windows.Forms.Button btnRefresh;
+
         private System.Windows.Forms.Button btnMin;
         private System.Windows.Forms.Button btnMaximize;
         private System.Windows.Forms.Button btnExit;

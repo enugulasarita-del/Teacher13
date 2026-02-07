@@ -26,59 +26,68 @@ namespace TeacherDashboard.Controls
         private void SetupStrictLayout()
         {
             this.Controls.Clear();
-            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.BackColor = Color.White;
 
             // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(173, 22, 37) };
-            Label lblTitle = new Label() { Text = "FACULTY CLASS ACTIVITIES", Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(25, 15) };
-            pnlHeader.Controls.Add(lblTitle);
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 120, BackColor = Color.White, Padding = new Padding(30, 25, 30, 0) };
+            
+            FlowLayoutPanel tlpHead = new FlowLayoutPanel() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true };
+            
+            Label lblTitle = new Label() { Text = "🎓 FACULTY CLASS ACTIVITIES", Font = new Font("Segoe UI", 22, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true, Margin = new Padding(0, 0, 0, 5) };
+            Label lblSubtitle = new Label() { Text = "Monitor lecture progress, syllabus coverage, and daily academic schedules", Font = new Font("Segoe UI", 11), ForeColor = Color.Gray, AutoSize = true, Margin = new Padding(4, 0, 0, 0) };
+            
+            tlpHead.Controls.Add(lblTitle);
+            tlpHead.Controls.Add(lblSubtitle);
+            pnlHeader.Controls.Add(tlpHead);
+
+            Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 5, BackColor = Color.FromArgb(173, 22, 37) };
+            pnlHeader.Controls.Add(pnlAccent);
             this.Controls.Add(pnlHeader);
 
             Panel pnlScroll = new Panel() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(25) };
             this.Controls.Add(pnlScroll);
 
             // 2. Filter Bar
-            Panel pnlFilter = new Panel() { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(32, 33, 36), Padding = new Padding(15) };
-            FlowLayoutPanel flpFilters = new FlowLayoutPanel() { Dock = DockStyle.Fill, WrapContents = false };
+            Panel pnlFilterBar = new Panel() { Dock = DockStyle.Top, Height = 90, BackColor = Color.FromArgb(245, 245, 245), Padding = new Padding(0) };
+            FlowLayoutPanel flpFilters = new FlowLayoutPanel() { Location = new Point(30, 0), Size = new Size(1100, 85), FlowDirection = FlowDirection.LeftToRight, BackColor = Color.Transparent };
             
-            Label lblFilter = new Label() { Text = "FILTERS:", Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.LightGray, AutoSize = true, Margin = new Padding(0, 5, 20, 0) };
-            flpFilters.Controls.Add(lblFilter);
-
+            // Initialize filters before adding to groups
             cmbDept = CreateDarkComboBox(new string[] { "All Departments", "B.Sc IT", "B.Sc CS", "BMS", "B.Com" });
             cmbDept.Width = 160;
-            flpFilters.Controls.Add(cmbDept);
-
+            
             cmbDiv = CreateDarkComboBox(new string[] { "All Divisions", "Div A", "Div B", "Div C" });
             cmbDiv.Width = 120;
-            flpFilters.Controls.Add(cmbDiv);
-
+            
             cmbDay = CreateDarkComboBox(new string[] { "Today", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" });
             cmbDay.Width = 120;
-            flpFilters.Controls.Add(cmbDay);
-
+            
             cmbView = CreateDarkComboBox(new string[] { "Schedule View", "List View", "Calendar View" });
             cmbView.Width = 150;
-            flpFilters.Controls.Add(cmbView);
 
-            Button btnApply = new Button() { Text = "Apply Filter", FlatStyle = FlatStyle.Flat, ForeColor = Color.White, BackColor = Color.FromArgb(46, 204, 113), Size = new Size(120, 32), Margin = new Padding(20, 0, 0, 0), Cursor = Cursors.Hand };
+            flpFilters.Controls.Add(CreateFilterGroup("DEPARTMENT", cmbDept));
+            flpFilters.Controls.Add(CreateFilterGroup("DIVISION", cmbDiv));
+            flpFilters.Controls.Add(CreateFilterGroup("DAY", cmbDay));
+            flpFilters.Controls.Add(CreateFilterGroup("VIEW MODE", cmbView));
+
+            Button btnApply = new Button() { Text = "🔍 APPLY", FlatStyle = FlatStyle.Flat, ForeColor = Color.White, BackColor = Color.FromArgb(173, 22, 37), Size = new Size(120, 36), Margin = new Padding(10, 32, 0, 0), Cursor = Cursors.Hand, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             btnApply.FlatAppearance.BorderSize = 0;
             btnApply.Click += (s, e) => LoadMockData();
             flpFilters.Controls.Add(btnApply);
 
-            pnlFilter.Controls.Add(flpFilters);
-            pnlScroll.Controls.Add(pnlFilter);
+            pnlFilterBar.Controls.Add(flpFilters);
+            pnlScroll.Controls.Add(pnlFilterBar);
 
             // ... (rest of SetupStrictLayout remains the same)
             // 3. Summary Stats
-            FlowLayoutPanel flpStats = new FlowLayoutPanel() { Dock = DockStyle.Top, Height = 110, Padding = new Padding(0, 20, 0, 10) };
+            FlowLayoutPanel flpStats = new FlowLayoutPanel() { Dock = DockStyle.Top, Height = 140, Padding = new Padding(0, 30, 0, 20), Margin = new Padding(0, 0, 0, 40) }; // Added margin for gap
             
-            lblLecCount = new Label() { Text = "0", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 35), AutoSize = true };
-            lblPracCount = new Label() { Text = "0", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 35), AutoSize = true };
-            lblBreakTime = new Label() { Text = "12:30 PM", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 35), AutoSize = true };
+            lblLecCount = new Label() { Text = "0", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(15, 35), AutoSize = true };
+            lblPracCount = new Label() { Text = "0", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(15, 35), AutoSize = true };
+            lblBreakTime = new Label() { Text = "12:30 PM", Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(15, 35), AutoSize = true };
 
-            flpStats.Controls.Add(CreateCompactStat("Lectures Today", lblLecCount, Color.FromArgb(52, 152, 219)));
-            flpStats.Controls.Add(CreateCompactStat("Practicals", lblPracCount, Color.FromArgb(155, 89, 182)));
-            flpStats.Controls.Add(CreateCompactStat("Next Break", lblBreakTime, Color.FromArgb(46, 204, 113)));
+            flpStats.Controls.Add(CreateCompactStat("Lectures Today", lblLecCount, Color.FromArgb(173, 22, 37)));
+            flpStats.Controls.Add(CreateCompactStat("Practicals", lblPracCount, Color.FromArgb(173, 22, 37)));
+            flpStats.Controls.Add(CreateCompactStat("Next Break", lblBreakTime, Color.FromArgb(173, 22, 37)));
             pnlScroll.Controls.Add(flpStats);
 
             // 4. NEW: Today's Lectures (Time Table View)
@@ -90,7 +99,7 @@ namespace TeacherDashboard.Controls
             pnlScroll.Controls.Add(flpSchedule);
 
             // 5. Faculty Class Engagement & Reminders (REPLACED Syllabus Tracker)
-            Label lblRemindersTitle = new Label() { Text = "FACULTY ACTION ITEMS & CLASS NOTES", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Top, Height = 45, Margin = new Padding(0, 25, 0, 0), TextAlign = ContentAlignment.BottomLeft };
+            Label lblRemindersTitle = new Label() { Text = "FACULTY ACTION ITEMS & CLASS NOTES", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Top, Height = 60, Margin = new Padding(0, 40, 0, 0), TextAlign = ContentAlignment.BottomLeft }; // Increased height and margin
             pnlScroll.Controls.Add(lblRemindersTitle);
 
             flpDailyReports = new FlowLayoutPanel() { Dock = DockStyle.Top, AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Width = 1000 };
@@ -105,7 +114,18 @@ namespace TeacherDashboard.Controls
             pnlScroll.Controls.SetChildIndex(flpSchedule, 2); // Middle
             pnlScroll.Controls.SetChildIndex(lblSchedule, 3);
             pnlScroll.Controls.SetChildIndex(flpStats, 4);    // Upper
-            pnlScroll.Controls.SetChildIndex(pnlFilter, 5);   // Top
+            pnlScroll.Controls.SetChildIndex(pnlFilterBar, 5);   // Top
+        }
+
+        private Panel CreateFilterGroup(string label, Control input)
+        {
+            Panel p = new Panel() { Width = input.Width, Height = 70, Margin = new Padding(0, 10, 50, 0) };
+            Label l = new Label() { Text = label, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Dock = DockStyle.Top, Height = 25 };
+            input.Dock = DockStyle.Top;
+            input.Font = new Font("Segoe UI", 10);
+            p.Controls.Add(input);
+            p.Controls.Add(l);
+            return p;
         }
 
         private ComboBox CreateDarkComboBox(string[] items)
@@ -113,17 +133,22 @@ namespace TeacherDashboard.Controls
             ComboBox cb = new ComboBox();
             cb.Items.AddRange(items);
             cb.SelectedIndex = 0;
-            cb.BackColor = Color.FromArgb(45, 45, 48);
-            cb.ForeColor = Color.White;
+            cb.BackColor = Color.White;
+            cb.ForeColor = Color.FromArgb(40, 40, 40);
             cb.FlatStyle = FlatStyle.Flat;
             cb.Font = new Font("Segoe UI", 10);
             cb.DropDownStyle = ComboBoxStyle.DropDownList;
+            
+            // Add visible border
+            cb.Paint += (s, e) => {
+                e.Graphics.DrawRectangle(new Pen(Color.FromArgb(180, 180, 180), 1), 0, 0, cb.Width - 1, cb.Height - 1);
+            };
             return cb;
         }
 
         private Panel CreateCompactStat(string title, Label lblValue, Color accent)
         {
-            Panel p = new Panel() { Size = new Size(220, 80), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 20, 10) };
+            Panel p = new Panel() { Size = new Size(240, 90), BackColor = Color.White, Margin = new Padding(0, 0, 40, 10) };
             Panel l = new Panel() { Dock = DockStyle.Left, Width = 4, BackColor = accent };
             Label lblT = new Label() { Text = title.ToUpper(), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.Gray, Location = new Point(15, 15), AutoSize = true };
             p.Controls.AddRange(new Control[] { l, lblT, lblValue });
@@ -133,16 +158,16 @@ namespace TeacherDashboard.Controls
         // NEW: Schedule Card Helper
         private Panel CreateScheduleRow(string time, string type, string deptClass, string subject, Color accent)
         {
-            Panel p = new Panel() { Size = new Size(950, 90), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 0, 15) };
+            Panel p = new Panel() { Size = new Size(950, 100), BackColor = Color.White, Margin = new Padding(0, 0, 0, 20) };
             Panel l = new Panel() { Dock = DockStyle.Left, Width = 6, BackColor = accent };
             string duration = (type == "PRACTICAL") ? "Duration: 2 Hours (Lab)" : "Duration: 1 Hour (Lec)";
             Color typeColor = (type == "PRACTICAL") ? Color.FromArgb(155, 89, 182) : Color.FromArgb(52, 152, 219);
 
-            Label lblTime = new Label() { Text = time, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Location = new Point(25, 20), AutoSize = true };
+            Label lblTime = new Label() { Text = time, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(40, 40, 40), Location = new Point(25, 20), AutoSize = true };
             Label lblTimeSub = new Label() { Text = duration, Font = new Font("Segoe UI", 9, FontStyle.Italic), ForeColor = Color.Gray, Location = new Point(25, 48), AutoSize = true };
-            Label lblType = new Label() { Text = type, BackColor = Color.FromArgb(40, typeColor), ForeColor = typeColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(200, 30), Size = new Size(110, 28), TextAlign = ContentAlignment.MiddleCenter, FlatStyle = FlatStyle.Flat };
-            Label lblClass = new Label() { Text = deptClass, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Location = new Point(360, 15), AutoSize = true };
-            Label lblSub = new Label() { Text = subject, Font = new Font("Segoe UI", 10), ForeColor = Color.LightGray, Location = new Point(360, 45), AutoSize = true };
+            Label lblType = new Label() { Text = type, BackColor = Color.FromArgb(20, typeColor), ForeColor = typeColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(200, 30), Size = new Size(110, 28), TextAlign = ContentAlignment.MiddleCenter, FlatStyle = FlatStyle.Flat };
+            Label lblClass = new Label() { Text = deptClass, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(40, 40, 40), Location = new Point(360, 15), AutoSize = true };
+            Label lblSub = new Label() { Text = subject, Font = new Font("Segoe UI", 10), ForeColor = Color.Gray, Location = new Point(360, 45), AutoSize = true };
             Label lblStatus = new Label() { Text = "Upcoming", Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.FromArgb(46, 204, 113), Location = new Point(830, 35), AutoSize = true };
 
             p.Controls.AddRange(new Control[] { l, lblTime, lblTimeSub, lblType, lblClass, lblSub, lblStatus });
@@ -151,9 +176,9 @@ namespace TeacherDashboard.Controls
 
         private Panel CreateActionItem(string type, string desc, string deadline, Color color)
         {
-            Panel p = new Panel() { Size = new Size(950, 75), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 0, 12) };
+            Panel p = new Panel() { Size = new Size(950, 85), BackColor = Color.White, Margin = new Padding(0, 0, 0, 20) }; // Changed from Color.FromArgb(32, 33, 36)
             Label lblTag = new Label() { Text = type, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = color, Location = new Point(15, 12), AutoSize = true };
-            Label lblDesc = new Label() { Text = desc, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 32), AutoSize = true };
+            Label lblDesc = new Label() { Text = desc, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Color.FromArgb(40, 40, 40), Location = new Point(15, 32), AutoSize = true }; // Changed from Color.White
             Label lblTime = new Label() { Text = "Due: " + deadline, Font = new Font("Segoe UI", 9), ForeColor = Color.Gray, Location = new Point(780, 27), AutoSize = true };
             CheckBox cb = new CheckBox() { Location = new Point(910, 27), AutoSize = true, FlatStyle = FlatStyle.Flat };
             p.Controls.AddRange(new Control[] { lblTag, lblDesc, lblTime, cb });

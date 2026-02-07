@@ -12,10 +12,10 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
-        private Color borderColor = Color.FromArgb(45, 45, 48);
-        private Color textColor = Color.White;
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color borderColor = Color.FromArgb(220, 220, 220);
+        private Color textColor = Color.RoyalBlue;
 
         // UI Components
         private ComboBox cmbDept, cmbDiv, cmbType;
@@ -54,8 +54,8 @@ namespace TeacherDashboard.Controls
             this.Font = new Font("Segoe UI", 10);
 
             // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.FromArgb(25, 25, 25) };
-            Label lblTitle = new Label() { Text = "📚  STUDY RESOURCES & CONTENT", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Location = new Point(30, 20), AutoSize = true };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.White };
+            Label lblTitle = new Label() { Text = "📚  STUDY RESOURCES & CONTENT", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = primaryColor, Location = new Point(30, 20), AutoSize = true };
             pnlHeader.Controls.Add(lblTitle);
             Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
             pnlHeader.Controls.Add(pnlAccent);
@@ -109,18 +109,18 @@ namespace TeacherDashboard.Controls
             
             // Grid Filters
             Panel pnlGridFilters = new Panel() { Width = 1000, Height = 60, Margin = new Padding(0, 0, 0, 10) };
-            Label lblF = new Label() { Text = "FILTER BY:", ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(0, 2), AutoSize = true };
+            Label lblF = new Label() { Text = "FILTER BY:", ForeColor = primaryColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(0, 2), AutoSize = true };
             
-            ComboBox fDept = new ComboBox() { Name = "fDept", Location = new Point(0, 22), Width = 180, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
+            ComboBox fDept = new ComboBox() { Name = "fDept", Location = new Point(0, 22), Width = 180, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
             fDept.Items.AddRange(new string[] { "All Departments", "B.Sc IT", "B.Sc CS", "BMS", "B.Com" });
             fDept.SelectedIndex = 0;
             
-            ComboBox fDiv = new ComboBox() { Name = "fDiv", Location = new Point(190, 22), Width = 130, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
+            ComboBox fDiv = new ComboBox() { Name = "fDiv", Location = new Point(190, 22), Width = 130, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
             fDiv.Items.AddRange(new string[] { "All Divisions", "Div A", "Div B", "Div C" });
             fDiv.SelectedIndex = 0;
 
-            TextBox txtGridSearch = new TextBox() { Name = "txtGridSearch", Location = new Point(330, 22), Width = 250, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 11) };
-            Label lblS = new Label() { Text = "SEARCH CONTENT:", ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(330, 2), AutoSize = true };
+            TextBox txtGridSearch = new TextBox() { Name = "txtGridSearch", Location = new Point(330, 22), Width = 250, BackColor = Color.White, ForeColor = Color.RoyalBlue, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 11) };
+            Label lblS = new Label() { Text = "SEARCH CONTENT:", ForeColor = primaryColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(330, 2), AutoSize = true };
 
             // Live Filter Logic
             EventHandler filterHandler = (s, e) => {
@@ -153,10 +153,10 @@ namespace TeacherDashboard.Controls
             dgvResources = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dtResources,
-                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
-                ForeColor = Color.White,
-                GridColor = Color.FromArgb(50, 50, 50),
+                ForeColor = Color.RoyalBlue,
+                GridColor = Color.FromArgb(220, 220, 220),
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 AllowUserToAddRows = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
@@ -164,10 +164,10 @@ namespace TeacherDashboard.Controls
                 ColumnHeadersHeight = 50,
                 EnableHeadersVisualStyles = false
             };
-            dgvResources.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dgvResources.ColumnHeadersDefaultCellStyle.BackColor = primaryColor;
             dgvResources.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvResources.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dgvResources.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36);
+            dgvResources.DefaultCellStyle.BackColor = Color.White;
             dgvResources.DefaultCellStyle.SelectionBackColor = primaryColor;
 
             pnlGridWrap.Controls.Add(dgvResources);
@@ -204,8 +204,8 @@ namespace TeacherDashboard.Controls
         private ComboBox AddDropdown(TableLayoutPanel p, string label, string[] items, int col, int row)
         {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(10, 5, 10, 5) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, DropDownStyle = ComboBoxStyle.DropDownList };
+            Label lbl = new Label() { Text = label, ForeColor = primaryColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, DropDownStyle = ComboBoxStyle.DropDownList };
             cb.Items.AddRange(items);
             cb.SelectedIndex = 0;
             wrap.Controls.AddRange(new Control[] { cb, lbl });
@@ -216,8 +216,8 @@ namespace TeacherDashboard.Controls
         private TextBox AddTextbox(TableLayoutPanel p, string label, int col, int row, int colSpan)
         {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(10, 5, 10, 5) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            TextBox txt = new TextBox() { Dock = DockStyle.Top, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
+            Label lbl = new Label() { Text = label, ForeColor = primaryColor, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            TextBox txt = new TextBox() { Dock = DockStyle.Top, BackColor = Color.White, ForeColor = Color.RoyalBlue, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
             wrap.Controls.AddRange(new Control[] { txt, lbl });
             p.Controls.Add(wrap, col, row);
             if (colSpan > 1) p.SetColumnSpan(wrap, colSpan);

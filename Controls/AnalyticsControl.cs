@@ -12,11 +12,11 @@ namespace TeacherDashboard.Controls
         private Button currentBtn;
         
         // Colors
-        private Color clrBackground = Color.FromArgb(28, 40, 51); // #1C2833
-        private Color clrSidebar = Color.FromArgb(44, 62, 80);    // #2C3E50
-        private Color clrActive = Color.FromArgb(52, 152, 219);   // Blue
-        private Color clrCard = Color.FromArgb(52, 73, 94);       // #34495E
-        private Color clrText = Color.White;
+        private Color clrBackground = Color.White;
+        private Color clrSidebar = Color.FromArgb(245, 245, 245);
+        private Color clrActive = Color.FromArgb(173, 22, 37);   // VSIT Red
+        private Color clrCard = Color.White;
+        private Color clrText = Color.FromArgb(40, 40, 40);
 
         public AnalyticsControl()
         {
@@ -41,7 +41,7 @@ namespace TeacherDashboard.Controls
 
             // 1. LEFT NAVIGATION PANEL
             Panel pnlNav = new Panel() { Dock = DockStyle.Fill, BackColor = clrSidebar, Padding = new Padding(0, 20, 0, 0) };
-            Label lblNavTitle = new Label() { Text = "REPORTS & ANALYTICS", ForeColor = Color.LightGray, Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 50, TextAlign = ContentAlignment.MiddleCenter };
+            Label lblNavTitle = new Label() { Text = "REPORTS & ANALYTICS", ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 50, TextAlign = ContentAlignment.MiddleCenter };
             pnlNav.Controls.Add(lblNavTitle);
 
             AddNavButton(pnlNav, "Teacher Performance", LoadTeacherPerformance);
@@ -67,14 +67,14 @@ namespace TeacherDashboard.Controls
                 FlatStyle = FlatStyle.Flat, 
                 FlatAppearance = { BorderSize = 0 },
                 BackColor = clrSidebar, 
-                ForeColor = Color.LightGray, 
+                ForeColor = Color.FromArgb(40, 40, 40), 
                 TextAlign = ContentAlignment.MiddleLeft, 
                 Font = new Font("Segoe UI", 10),
                 Cursor = Cursors.Hand,
                 Padding = new Padding(15, 0, 0, 0)
             };
             btn.Click += (s, e) => {
-                if (currentBtn != null) { currentBtn.BackColor = clrSidebar; currentBtn.ForeColor = Color.LightGray; }
+                if (currentBtn != null) { currentBtn.BackColor = clrSidebar; currentBtn.ForeColor = Color.FromArgb(40, 40, 40); }
                 currentBtn = btn;
                 currentBtn.BackColor = clrActive;
                 currentBtn.ForeColor = Color.White;
@@ -211,8 +211,8 @@ namespace TeacherDashboard.Controls
             
             // Text Container (Left)
             Panel pnlText = new Panel() { Dock = DockStyle.Fill };
-            Label lblT = new Label() { Text = title.ToUpper(), Font = new Font("Segoe UI", 24, FontStyle.Bold), ForeColor = clrText, Dock = DockStyle.Top, Height = 50, AutoSize = false };
-            Label lblS = new Label() { Text = subtitle, Font = new Font("Segoe UI", 11), ForeColor = Color.DarkGray, Dock = DockStyle.Top, Height = 30, AutoSize = false };
+            Label lblT = new Label() { Text = title.ToUpper(), Font = new Font("Segoe UI", 24, FontStyle.Bold), ForeColor = clrActive, Dock = DockStyle.Top, Height = 50, AutoSize = false };
+            Label lblS = new Label() { Text = subtitle, Font = new Font("Segoe UI", 11), ForeColor = Color.Gray, Dock = DockStyle.Top, Height = 30, AutoSize = false };
             pnlText.Controls.Add(lblS);
             pnlText.Controls.Add(lblT);
             
@@ -243,12 +243,12 @@ namespace TeacherDashboard.Controls
                 
                 // Add a border effect
                 p.Paint += (s, ev) => {
-                    ControlPaint.DrawBorder(ev.Graphics, p.ClientRectangle, Color.FromArgb(50, 255, 255, 255), ButtonBorderStyle.Solid);
+                    ControlPaint.DrawBorder(ev.Graphics, p.ClientRectangle, Color.FromArgb(220, 220, 220), ButtonBorderStyle.Solid);
                 };
 
                 Panel bar = new Panel() { Dock = DockStyle.Left, Width = 5, BackColor = clrActive };
-                Label lT = new Label() { Text = stat.t, ForeColor = Color.LightGray, Font = new Font("Segoe UI", 9, FontStyle.Bold), Location = new Point(15, 15), AutoSize = true };
-                Label lV = new Label() { Text = stat.v, ForeColor = Color.White, Font = new Font("Segoe UI", 12, FontStyle.Bold), Location = new Point(15, 40), AutoSize = true };
+                Label lT = new Label() { Text = stat.t, ForeColor = Color.Gray, Font = new Font("Segoe UI", 9, FontStyle.Bold), Location = new Point(15, 15), AutoSize = true };
+                Label lV = new Label() { Text = stat.v, ForeColor = Color.RoyalBlue, Font = new Font("Segoe UI", 12, FontStyle.Bold), Location = new Point(15, 40), AutoSize = true };
                 Label lS = new Label() { Text = stat.s, ForeColor = clrActive, Font = new Font("Segoe UI", 10, FontStyle.Italic), Location = new Point(15, 75), AutoSize = true };
                 
                 p.Controls.AddRange(new Control[] { bar, lT, lV, lS });
@@ -266,7 +266,7 @@ namespace TeacherDashboard.Controls
         {
             DataGridView dgv = new DataGridView() { 
                 Dock = DockStyle.Fill, 
-                BackgroundColor = clrBackground, 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
                 ColumnHeadersHeight = 50,
                 RowHeadersVisible = false,
@@ -278,14 +278,14 @@ namespace TeacherDashboard.Controls
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect
             };
             
-            dgv.DefaultCellStyle.BackColor = clrCard;
-            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10);
             
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = clrSidebar;
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = clrActive;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(40, 55, 70); 
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245); 
             
             return dgv;
         }

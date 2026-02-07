@@ -57,7 +57,7 @@ namespace TeacherDashboard
             // 
             // pnlRight
             // 
-            this.pnlRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(33)))), ((int)(((byte)(36)))));
+            this.pnlRight.BackColor = System.Drawing.Color.White;
             this.pnlRight.Controls.Add(this.lblAdminLogin);
             this.pnlRight.Controls.Add(this.btnLogin);
             this.pnlRight.Controls.Add(this.lblPassword);
@@ -79,7 +79,7 @@ namespace TeacherDashboard
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.btnClose.ForeColor = System.Drawing.Color.White;
+            this.btnClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.btnClose.Location = new System.Drawing.Point(460, 5);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(35, 35);
@@ -101,10 +101,10 @@ namespace TeacherDashboard
             // 
             // txtUsername
             // 
-            this.txtUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.txtUsername.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtUsername.BackColor = System.Drawing.Color.White;
+            this.txtUsername.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtUsername.ForeColor = System.Drawing.Color.White;
+            this.txtUsername.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.txtUsername.Location = new System.Drawing.Point(58, 180);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(380, 22);
@@ -112,10 +112,10 @@ namespace TeacherDashboard
             // 
             // txtPassword
             // 
-            this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtPassword.BackColor = System.Drawing.Color.White;
+            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtPassword.ForeColor = System.Drawing.Color.White;
+            this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.txtPassword.Location = new System.Drawing.Point(58, 250);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '●';
@@ -126,7 +126,7 @@ namespace TeacherDashboard
             // 
             this.lblUsername.AutoSize = true;
             this.lblUsername.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblUsername.ForeColor = System.Drawing.Color.Silver;
+            this.lblUsername.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(22)))), ((int)(((byte)(37)))));
             this.lblUsername.Location = new System.Drawing.Point(55, 160);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(64, 15);
@@ -137,7 +137,7 @@ namespace TeacherDashboard
             // 
             this.lblPassword.AutoSize = true;
             this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblPassword.ForeColor = System.Drawing.Color.Silver;
+            this.lblPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(22)))), ((int)(((byte)(37)))));
             this.lblPassword.Location = new System.Drawing.Point(55, 230);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(59, 15);
@@ -161,11 +161,11 @@ namespace TeacherDashboard
             // 
             // cmbRole
             // 
-            this.cmbRole.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbRole.BackColor = System.Drawing.Color.White;
             this.cmbRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbRole.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbRole.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.cmbRole.ForeColor = System.Drawing.Color.White;
+            this.cmbRole.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.cmbRole.FormattingEnabled = true;
             this.cmbRole.Items.AddRange(new object[] {
             "Teacher",
@@ -179,7 +179,7 @@ namespace TeacherDashboard
             // 
             this.lblRoleSelect.AutoSize = true;
             this.lblRoleSelect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblRoleSelect.ForeColor = System.Drawing.Color.Silver;
+            this.lblRoleSelect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(173)))), ((int)(((byte)(22)))), ((int)(((byte)(37)))));
             this.lblRoleSelect.Location = new System.Drawing.Point(55, 272);
             this.lblRoleSelect.Name = "lblRoleSelect";
             this.lblRoleSelect.Size = new System.Drawing.Size(73, 15);

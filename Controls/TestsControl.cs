@@ -12,9 +12,9 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
-        private Color borderColor = Color.FromArgb(45, 45, 48);
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color borderColor = Color.FromArgb(220, 220, 220);
 
         // UI Components
         private DataGridView dgvInvigilation;
@@ -65,8 +65,8 @@ namespace TeacherDashboard.Controls
             this.Font = new Font("Segoe UI", 10);
 
             // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.FromArgb(25, 25, 25) };
-            Label lblTitle = new Label() { Text = "👨‍🏫 TEACHER EXAMINATION PORTFOLIO", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Location = new Point(30, 20), AutoSize = true };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.White };
+            Label lblTitle = new Label() { Text = "👨‍🏫 TEACHER EXAMINATION PORTFOLIO", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(30, 20), AutoSize = true };
             pnlHeader.Controls.Add(lblTitle);
             Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
             pnlHeader.Controls.Add(pnlAccent);
@@ -140,7 +140,7 @@ namespace TeacherDashboard.Controls
             Panel p = new Panel() { Dock = DockStyle.Fill, BackColor = cardBg, Margin = new Padding(0, 0, 15, 0), Padding = new Padding(15, 10, 15, 10) };
             p.Paint += (s, e) => DrawBorder(e.Graphics, p.ClientRectangle);
             Label l1 = new Label() { Text = head, ForeColor = accent, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top, AutoSize = true };
-            Label l2 = new Label() { Text = val, ForeColor = Color.White, Font = new Font("Segoe UI", 11, FontStyle.Bold), Dock = DockStyle.Top, Padding = new Padding(0, 5, 0, 0), AutoSize = true };
+            Label l2 = new Label() { Text = val, ForeColor = Color.FromArgb(40, 40, 40), Font = new Font("Segoe UI", 11, FontStyle.Bold), Dock = DockStyle.Top, Padding = new Padding(0, 5, 0, 0), AutoSize = true };
             p.Controls.Add(l2); p.Controls.Add(l1);
             return p;
         }
@@ -165,10 +165,10 @@ namespace TeacherDashboard.Controls
             DataGridView d = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dt, 
-                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None, 
-                ForeColor = Color.White, 
-                GridColor = Color.FromArgb(50, 50, 50), 
+                ForeColor = Color.FromArgb(40, 40, 40), 
+                GridColor = Color.FromArgb(220, 220, 220), 
                 RowTemplate = { Height = 40 }, 
                 ColumnHeadersHeight = 45, 
                 AllowUserToAddRows = false, 
@@ -182,11 +182,11 @@ namespace TeacherDashboard.Controls
                 MultiSelect = false
             };
             
-            d.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48); 
+            d.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(173, 22, 37); 
             d.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; 
             d.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-            d.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36); 
-            d.DefaultCellStyle.SelectionBackColor = Color.FromArgb(60, 60, 60); // Subtle selection
+            d.DefaultCellStyle.BackColor = Color.White; 
+            d.DefaultCellStyle.SelectionBackColor = Color.FromArgb(173, 22, 37); 
             d.DefaultCellStyle.SelectionForeColor = Color.White;
             
             return d;

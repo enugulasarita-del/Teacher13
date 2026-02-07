@@ -12,8 +12,10 @@ namespace TeacherDashboard.Controls
         private ComboBox cmbDept, cmbYear, cmbDiv;
         private DataGridView dgvMerit, dgvRemedial;
         private DataTable dtMeritHub, dtRemedialHub;
-        private Panel pnlPieChartContainer;
-        private float[] pieValues = { 40, 25, 20, 15 }; // Default IT, DS, CS, BMS
+        private Panel pnlPieChartContainer, pnlTopRankerContainer;
+        private float[] pieValues = { 50, 30, 20 }; // IT, DS, CS
+        private string[] rankerNames = { "Rahul Sharma", "Priya Nair", "Deepak Verma" };
+        private int[] rankerScores = { 98, 97, 96 };
         
         public StudentsControl()
         {
@@ -25,15 +27,14 @@ namespace TeacherDashboard.Controls
 
         private void SetupCrystalClearLayout()
         {
-            this.Controls.Clear();
-            this.BackColor = Color.FromArgb(15, 15, 15);
+            this.BackColor = Color.White;
 
-            // 1. INSTITUTIONAL HEADER (FIXED)
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 80, BackColor = Color.FromArgb(173, 22, 37) };
+            // 1. INSTITUTIONAL HEADER
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 80, BackColor = Color.White };
             Label lblTitle = new Label() { 
                 Text = "STUDENT PERFORMANCE & MERIT HUB", 
                 Font = new Font("Segoe UI", 22, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = Color.FromArgb(173, 22, 37), 
                 Dock = DockStyle.Fill, 
                 TextAlign = ContentAlignment.MiddleLeft,
                 Padding = new Padding(30, 0, 0, 0)
@@ -45,7 +46,7 @@ namespace TeacherDashboard.Controls
             Panel pnlScroll = new Panel() { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(30, 10, 30, 30) };
             this.Controls.Add(pnlScroll);
 
-            // 3. MASTER STACK (FlowLayoutPanel)
+            // 3. MASTER STACK
             FlowLayoutPanel flpMaster = new FlowLayoutPanel() { 
                 Dock = DockStyle.Top, 
                 FlowDirection = FlowDirection.TopDown, 
@@ -56,7 +57,6 @@ namespace TeacherDashboard.Controls
             };
             pnlScroll.Controls.Add(flpMaster);
             
-            // Adjust card widths on resize to prevent button clipping
             pnlScroll.Resize += (s, e) => { 
                 flpMaster.Width = pnlScroll.Width - 80; 
                 foreach(Control c in flpMaster.Controls) {
@@ -67,16 +67,15 @@ namespace TeacherDashboard.Controls
             // --- SECTION 1: FILTER CARD ---
             Panel pnlFilterCard = CreateStyledCard(105);
             FlowLayoutPanel flpFilters = new FlowLayoutPanel() { Dock = DockStyle.Fill, WrapContents = false, Padding = new Padding(10, 15, 0, 0) };
-            flpFilters.Controls.Add(CreateFilter("DEPARTMENT", out cmbDept, new string[] { "BSc IT", "BSc DS", "BSc CS", "BMS" }));
+            flpFilters.Controls.Add(CreateFilter("DEPARTMENT", out cmbDept, new string[] { "BSc IT", "BSc DS", "BSc CS" }));
             flpFilters.Controls.Add(CreateFilter("ACADEMIC YEAR", out cmbYear, new string[] { "2024-25", "2025-26", "2026-27" }));
             flpFilters.Controls.Add(CreateFilter("DIVISION", out cmbDiv, new string[] { "All", "Div A", "Div B", "Div C" }));
             
-            // Add Apply Button directly to Filter Bar
             Button btnApply = new Button() { 
                 Text = "🔍 APPLY FILTERS", 
                 Width = 160, 
                 Height = 35,
-                Margin = new Padding(0, 25, 0, 0), // Align with ComboBoxes
+                Margin = new Padding(0, 25, 0, 0), 
                 BackColor = Color.FromArgb(173, 22, 37), 
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat, 
@@ -90,15 +89,26 @@ namespace TeacherDashboard.Controls
             pnlFilterCard.Controls.Add(flpFilters);
             flpMaster.Controls.Add(pnlFilterCard);
 
-            // --- SECTION 2: ANALYTICS HUB (Centered Pie Chart) ---
-            Panel pnlAnalyticsCard = CreateStyledCard(450);
+            // --- SECTION 2: ANALYTICS HUB ---
+            Panel pnlAnalyticsCard = CreateStyledCard(480);
             pnlAnalyticsCard.Margin = new Padding(0, 20, 0, 0);
             
-            pnlPieChartContainer = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(24, 25, 26), Padding = new Padding(10) };
+            TableLayoutPanel tlpCharts = new TableLayoutPanel() { 
+                Dock = DockStyle.Fill, 
+                ColumnCount = 2,
+                RowCount = 1
+            };
+            tlpCharts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpCharts.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpCharts.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            pnlAnalyticsCard.Controls.Add(tlpCharts);
+
+            // Left Side: Pie Chart
+            pnlPieChartContainer = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(10) };
             Label lblC = new Label() { 
-                Text = "DEPARTMENT PERFORMANCE INDEX", 
+                Text = "DEPARTMENT PERFORMANCE", 
                 Font = new Font("Segoe UI", 12, FontStyle.Bold), 
-                ForeColor = Color.Red, 
+                ForeColor = Color.FromArgb(173, 22, 37), 
                 Dock = DockStyle.Top, 
                 Height = 40,
                 TextAlign = ContentAlignment.MiddleCenter
@@ -107,31 +117,44 @@ namespace TeacherDashboard.Controls
             piePaintArea.Paint += PieArea_Paint;
             pnlPieChartContainer.Controls.Add(piePaintArea);
             pnlPieChartContainer.Controls.Add(lblC);
-            
-            pnlAnalyticsCard.Controls.Add(pnlPieChartContainer);
+            tlpCharts.Controls.Add(pnlPieChartContainer, 0, 0);
+
+            // Right Side: Top Ranker Chart
+            pnlTopRankerContainer = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(10) };
+            Label lblR = new Label() { 
+                Text = "STUDENT TOP RANKERS", 
+                Font = new Font("Segoe UI", 12, FontStyle.Bold), 
+                ForeColor = Color.FromArgb(173, 22, 37), 
+                Dock = DockStyle.Top, 
+                Height = 40,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            Panel rankerPaintArea = new Panel() { Dock = DockStyle.Fill };
+            rankerPaintArea.Paint += TopRankerArea_Paint;
+            pnlTopRankerContainer.Controls.Add(rankerPaintArea);
+            pnlTopRankerContainer.Controls.Add(lblR);
+            tlpCharts.Controls.Add(pnlTopRankerContainer, 1, 0);
+
             flpMaster.Controls.Add(pnlAnalyticsCard);
 
             // --- SECTION 3: MANAGEMENT HUBS ---
-            // MERIT HUB
             Panel pnlMeritHub = CreateStyledCard(380);
             pnlMeritHub.Margin = new Padding(0, 20, 0, 0);
             pnlMeritHub.Controls.Add(CreateDataGridHub("🏆 MERIT HUB", out dgvMerit, Color.FromArgb(46, 204, 113)));
             flpMaster.Controls.Add(pnlMeritHub);
 
-            // REMEDIAL HUB
             Panel pnlRemedialHub = CreateStyledCard(380);
             pnlRemedialHub.Margin = new Padding(0, 20, 0, 30);
             pnlRemedialHub.Controls.Add(CreateDataGridHub("🆘 REMEDIAL HUB", out dgvRemedial, Color.FromArgb(231, 76, 60)));
             flpMaster.Controls.Add(pnlRemedialHub);
 
-            // Ensure Correct Order
             this.Controls.SetChildIndex(pnlHeader, 1);
             this.Controls.SetChildIndex(pnlScroll, 0);
         }
 
         private Panel CreateStyledCard(int height)
         {
-            return new Panel() { Height = height, Width = 900, BackColor = Color.FromArgb(30, 30, 32), Padding = new Padding(15), Margin = new Padding(0, 0, 0, 25) };
+            return new Panel() { Height = height, Width = 900, BackColor = Color.White, Padding = new Padding(15), Margin = new Padding(0, 0, 0, 25) };
         }
 
         private Panel CreateFilter(string title, out ComboBox cb, string[] items)
@@ -140,7 +163,7 @@ namespace TeacherDashboard.Controls
             Label l = new Label() { Text = title, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Dock = DockStyle.Top, Height = 25 };
             cb = new ComboBox() { 
                 Dock = DockStyle.Top, DropDownStyle = ComboBoxStyle.DropDownList, Height = 35,
-                BackColor = Color.FromArgb(50, 50, 55), ForeColor = Color.White, FlatStyle = FlatStyle.Flat,
+                BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), FlatStyle = FlatStyle.Flat,
                 Font = new Font("Segoe UI", 11)
             };
             cb.Items.AddRange(items);
@@ -152,10 +175,10 @@ namespace TeacherDashboard.Controls
 
         private Panel CreateKPIBox(string title, string val, Color accent, out Label valLabel)
         {
-            Panel p = new Panel() { Width = 160, Height = 100, BackColor = Color.FromArgb(40, 40, 45), Margin = new Padding(0, 0, 15, 15) };
+            Panel p = new Panel() { Width = 160, Height = 100, BackColor = Color.White, Margin = new Padding(0, 0, 15, 15) };
             Panel bar = new Panel() { Dock = DockStyle.Left, Width = 6, BackColor = accent };
             Label lblT = new Label() { Text = title, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.DarkGray, Location = new Point(15, 15), AutoSize = true };
-            valLabel = new Label() { Text = val, Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 40), AutoSize = true };
+            valLabel = new Label() { Text = val, Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.RoyalBlue, Location = new Point(15, 40), AutoSize = true };
             p.Controls.AddRange(new Control[] { bar, lblT, valLabel });
             return p;
         }
@@ -166,7 +189,7 @@ namespace TeacherDashboard.Controls
             
             // Header Panel for Label + Button
             Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 50, Padding = new Padding(0, 0, 15, 0) }; // Added right padding
-            Label lbl = new Label() { Text = title, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Left, Width = 400, TextAlign = ContentAlignment.MiddleLeft };
+            Label lbl = new Label() { Text = title, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(40, 40, 40), Dock = DockStyle.Left, Width = 400, TextAlign = ContentAlignment.MiddleLeft };
             
             Button btnAdd = new Button() { 
                 Text = "➕ ADD STUDENT", 
@@ -186,17 +209,17 @@ namespace TeacherDashboard.Controls
             pnlHeader.Controls.Add(btnAdd);
 
             dgv = new DataGridView() { 
-                Dock = DockStyle.Fill, BackgroundColor = Color.FromArgb(28, 28, 28), BorderStyle = BorderStyle.None,
+                Dock = DockStyle.Fill, BackgroundColor = Color.White, BorderStyle = BorderStyle.None,
                 EnableHeadersVisualStyles = false, ColumnHeadersHeight = 50, AllowUserToAddRows = false,
-                GridColor = Color.FromArgb(45, 45, 45), RowHeadersVisible = false, RowTemplate = { Height = 45 },
+                GridColor = Color.FromArgb(220, 220, 220), RowHeadersVisible = false, RowTemplate = { Height = 45 },
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect, Font = new Font("Segoe UI", 10),
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing,
                 ColumnHeadersVisible = true,
                 AutoGenerateColumns = true
             };
-            dgv.DefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
-            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(173, 22, 37); // Distinct Red Header
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 11, FontStyle.Bold);
@@ -222,18 +245,18 @@ namespace TeacherDashboard.Controls
                 f.Text = isMerit ? "Add Merit Student" : "Add Remedial Student";
                 f.Size = new Size(400, 320); // Reduced height
                 f.StartPosition = FormStartPosition.CenterParent;
-                f.BackColor = Color.FromArgb(30, 30, 30);
-                f.ForeColor = Color.White;
+                f.BackColor = Color.White;
+                f.ForeColor = Color.FromArgb(40, 40, 40);
                 f.FormBorderStyle = FormBorderStyle.FixedDialog;
 
                 Label l1 = new Label() { Text = "Student Name:", Location = new Point(20, 20), AutoSize = true };
-                TextBox t1 = new TextBox() { Location = new Point(20, 45), Width = 340, BackColor = Color.FromArgb(60,60,60), ForeColor = Color.White };
+                TextBox t1 = new TextBox() { Location = new Point(20, 45), Width = 340, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle };
                 
                 Label l2 = new Label() { Text = "Core Concern:", Location = new Point(20, 80), AutoSize = true };
-                TextBox t2 = new TextBox() { Location = new Point(20, 105), Width = 340, BackColor = Color.FromArgb(60,60,60), ForeColor = Color.White };
+                TextBox t2 = new TextBox() { Location = new Point(20, 105), Width = 340, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle };
 
                 Label l4 = new Label() { Text = "Session Timing:", Location = new Point(20, 140), AutoSize = true }; // Moved Up
-                TextBox t4 = new TextBox() { Location = new Point(20, 165), Width = 340, BackColor = Color.FromArgb(60,60,60), ForeColor = Color.White }; // Moved Up
+                TextBox t4 = new TextBox() { Location = new Point(20, 165), Width = 340, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle }; // Moved Up
 
                 Button btnSave = new Button() { 
                     Text = "SAVE ENTRY", 
@@ -269,11 +292,10 @@ namespace TeacherDashboard.Controls
             Color[] colors = { 
                 Color.FromArgb(46, 204, 113), // GREEN
                 Color.FromArgb(52, 152, 219), // BLUE
-                Color.FromArgb(173, 22, 37),  // RED
-                Color.FromArgb(241, 196, 15)   // YELLOW
+                Color.FromArgb(173, 22, 37)   // RED
             };
-            string[] names = { "BSc IT", "BSc DS", "BSc CS", "BMS" };
-            string[] colorLabels = { "Green", "Blue", "Red", "Yellow" };
+            string[] names = { "BSc IT", "BSc DS", "BSc CS" };
+            string[] colorLabels = { "Green", "Blue", "Red" };
             
             float startAngle = 0;
             int legendStartY = chartSize + 35; 
@@ -290,10 +312,85 @@ namespace TeacherDashboard.Controls
                 
                 // Formatted Label: "Green: BSc IT (XX%)"
                 string displayName = $"{colorLabels[i]}: {names[i]} ({pieValues[i]}%)";
-                g.DrawString(displayName, new Font("Segoe UI", 10, FontStyle.Bold), Brushes.White, legendX + 25, legendStartY - 2 + (i * 35));
+                g.DrawString(displayName, new Font("Segoe UI", 10, FontStyle.Bold), Brushes.Gray, legendX + 25, legendStartY - 2 + (i * 35));
                 
                 startAngle += sweep;
             }
+        }
+
+        private void TopRankerArea_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            int margin = 50; // Increased margin
+            int chartWidth = e.ClipRectangle.Width - (margin * 2);
+            int chartHeight = e.ClipRectangle.Height - (margin * 2) - 60; // More space for names
+            int gap = 40; 
+            int barWidth = (chartWidth - (gap * (rankerNames.Length - 1))) / rankerNames.Length;
+            barWidth = Math.Min(barWidth, 80); // Cap width
+
+            // Draw Y-Axis lines (Guidelines only)
+            for (int j = 0; j <= 4; j++)
+            {
+                int yLine = e.ClipRectangle.Height - margin - 30 - (j * chartHeight / 4);
+                using (Pen p = new Pen(Color.FromArgb(245, 245, 245), 1))
+                {
+                    g.DrawLine(p, margin, yLine, e.ClipRectangle.Width - margin, yLine);
+                }
+            }
+
+            for (int i = 0; i < rankerNames.Length; i++)
+            {
+                int barHeight = (int)((rankerScores[i] / 100f) * chartHeight);
+                int x = margin + (i * (barWidth + gap)) + (chartWidth - (rankerNames.Length * (barWidth + gap)) + gap)/2;
+                int y = e.ClipRectangle.Height - margin - barHeight - 30;
+
+                Rectangle rect = new Rectangle(x, y, barWidth, barHeight);
+                
+                Color[] barColors = { 
+                    Color.FromArgb(173, 22, 37),  // VSIT Red
+                    Color.FromArgb(41, 128, 185), // Blue
+                    Color.FromArgb(39, 174, 96),  // Green
+                };
+                Color currentBarColor = barColors[i % barColors.Length];
+
+                using (LinearGradientBrush brush = new LinearGradientBrush(rect, currentBarColor, ControlPaint.Light(currentBarColor), LinearGradientMode.Vertical))
+                {
+                    GraphicsPath path = GetRoundedRect(rect, 4);
+                    g.FillPath(brush, path);
+                }
+
+                // Draw Score
+                g.DrawString(rankerScores[i].ToString() + "%", new Font("Segoe UI", 10, FontStyle.Bold), new SolidBrush(currentBarColor), x + (barWidth / 2) - 18, y - 25);
+
+                // Draw Name + Dept Tag
+                string[] depts = { "BSc IT", "BSc DS", "BSc CS" };
+                string currentDept = depts[i % depts.Length];
+                
+                // Centered text drawing
+                StringFormat sf = new StringFormat() { Alignment = StringAlignment.Center };
+                g.DrawString(rankerNames[i], new Font("Segoe UI", 8, FontStyle.Bold), Brushes.Black, x + barWidth/2, e.ClipRectangle.Height - margin - 5, sf);
+                g.DrawString(currentDept, new Font("Segoe UI", 7, FontStyle.Italic), new SolidBrush(Color.FromArgb(173, 22, 37)), x + barWidth/2, e.ClipRectangle.Height - margin + 10, sf);
+            }
+        }
+
+        private GraphicsPath GetRoundedRect(Rectangle bounds, int radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            int diameter = radius * 2;
+            Size size = new Size(diameter, diameter);
+            Rectangle arc = new Rectangle(bounds.Location, size);
+            if (radius == 0) { path.AddRectangle(bounds); return path; }
+            path.AddArc(arc, 180, 90);
+            arc.X = bounds.Right - diameter;
+            path.AddArc(arc, 270, 90);
+            arc.Y = bounds.Bottom - diameter;
+            path.AddArc(arc, 0, 90);
+            arc.X = bounds.Left;
+            path.AddArc(arc, 90, 90);
+            path.CloseFigure();
+            return path;
         }
 
         private void RefreshPerformanceData()
@@ -303,11 +400,14 @@ namespace TeacherDashboard.Controls
             string dept = cmbDept.SelectedItem?.ToString() ?? "BSc IT";
             string div = cmbDiv.SelectedItem?.ToString() ?? "All";
 
-            // 🟢 Update Strategic Insights based on Dept
-            if (dept == "BSc IT") pieValues = new float[] { 45, 25, 20, 10 };
-            else if (dept == "BSc DS") pieValues = new float[] { 20, 50, 15, 15 };
-            else if (dept == "BSc CS") pieValues = new float[] { 15, 20, 55, 10 };
-            else pieValues = new float[] { 10, 15, 20, 55 };
+            // 🟢 Update Strategic Insights (Pie) and Global Top Rankers
+            pieValues = (dept == "BSc IT") ? new float[] { 50, 30, 20 } :
+                        (dept == "BSc DS") ? new float[] { 25, 55, 20 } : new float[] { 20, 20, 60 };
+
+            // Show Top Students across DIFFERENT departments in the chart
+            rankerNames = new string[] { "Rahul Sharma", "Priya Nair", "Deepak Verma" };
+            rankerScores = new int[] { 98, 97, 96 };
+
 
             // 1. Re-Create Data Tables (Schema)
             dtMeritHub = new DataTable();
@@ -366,6 +466,7 @@ namespace TeacherDashboard.Controls
             dgvRemedial.DataSource = dtRemedialHub;
             
             if (pnlPieChartContainer != null) pnlPieChartContainer.Invalidate(true);
+            if (pnlTopRankerContainer != null) pnlTopRankerContainer.Invalidate(true);
         }
     }
 }

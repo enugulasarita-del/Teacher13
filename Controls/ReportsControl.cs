@@ -12,9 +12,9 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
-        private Color borderColor = Color.FromArgb(45, 45, 48);
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color borderColor = Color.FromArgb(220, 220, 220);
 
         // UI Components
         private ComboBox cmbCategory, cmbDept, cmbSem, cmbDiv;
@@ -54,8 +54,8 @@ namespace TeacherDashboard.Controls
             this.BackColor = bgColor;
             this.Dock = DockStyle.Fill;
 
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.FromArgb(25, 25, 25) };
-            Label lblTitle = new Label() { Text = "📊  REPORTS & INSIGHTS ENGINE", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Location = new Point(30, 20), AutoSize = true };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.White };
+            Label lblTitle = new Label() { Text = "📊  REPORTS & INSIGHTS ENGINE", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = primaryColor, Location = new Point(30, 20), AutoSize = true };
             pnlHeader.Controls.Add(lblTitle);
             Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
             pnlHeader.Controls.Add(pnlAccent);
@@ -75,9 +75,9 @@ namespace TeacherDashboard.Controls
             tlpStats.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
             tlpStats.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
 
-            lblTotalReports = new Label() { Text = "0", ForeColor = Color.White, Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
-            lblPendingAudits = new Label() { Text = "1", ForeColor = Color.White, Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
-            lblStudentFlags = new Label() { Text = "12", ForeColor = Color.White, Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
+            lblTotalReports = new Label() { Text = "0", ForeColor = Color.FromArgb(40, 40, 40), Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
+            lblPendingAudits = new Label() { Text = "1", ForeColor = Color.FromArgb(40, 40, 40), Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
+            lblStudentFlags = new Label() { Text = "12", ForeColor = Color.FromArgb(40, 40, 40), Font = new Font("Segoe UI", 16, FontStyle.Bold), AutoSize = true };
             
             tlpStats.Controls.Add(CreateStatCard("TOTAL GENERATED", lblTotalReports, Color.FromArgb(52, 152, 219)), 0, 0);
             tlpStats.Controls.Add(CreateStatCard("PENDING SYNC", lblPendingAudits, Color.FromArgb(241, 196, 15)), 1, 0);
@@ -124,10 +124,10 @@ namespace TeacherDashboard.Controls
             dgvReports = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dtReports,
-                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
-                ForeColor = Color.White,
-                GridColor = Color.FromArgb(50, 50, 50),
+                ForeColor = Color.FromArgb(40, 40, 40),
+                GridColor = Color.FromArgb(220, 220, 220),
                 AllowUserToAddRows = false,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 RowTemplate = { Height = 40 },
@@ -135,11 +135,10 @@ namespace TeacherDashboard.Controls
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 EnableHeadersVisualStyles = false
             };
-            dgvReports.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48);
+            dgvReports.ColumnHeadersDefaultCellStyle.BackColor = primaryColor;
             dgvReports.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvReports.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36);
+            dgvReports.DefaultCellStyle.BackColor = Color.White;
             dgvReports.DefaultCellStyle.SelectionBackColor = primaryColor;
-
             pnlGridWrap.Controls.Add(dgvReports);
             flpMain.Controls.Add(pnlGridWrap);
 
@@ -192,15 +191,15 @@ namespace TeacherDashboard.Controls
             lblStudentFlags.Text = flags.ToString();
 
             // 4. Status Auto-Styling
-            lblPendingAudits.ForeColor = pending > 0 ? Color.FromArgb(241, 196, 15) : Color.White;
-            lblStudentFlags.ForeColor = flags > 10 ? Color.FromArgb(231, 76, 60) : Color.White;
+            lblPendingAudits.ForeColor = pending > 0 ? Color.FromArgb(241, 196, 15) : Color.FromArgb(40, 40, 40);
+            lblStudentFlags.ForeColor = flags > 10 ? Color.FromArgb(231, 76, 60) : Color.FromArgb(40, 40, 40);
         }
 
         private ComboBox AddDropdown(TableLayoutPanel p, string label, string[] items, int col, int row)
         {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(0, 5, 20, 0) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
+            Label lbl = new Label() { Text = label, ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
             cb.Items.AddRange(items);
             cb.SelectedIndex = 0;
             wrap.Controls.AddRange(new Control[] { cb, lbl });

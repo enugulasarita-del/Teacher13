@@ -20,7 +20,7 @@ namespace TeacherDashboard.Controls
         public AdminAnnouncementsControl()
         {
             this.Dock = DockStyle.Fill;
-            this.BackColor = Color.FromArgb(15, 15, 15);
+            this.BackColor = Color.White;
             InitializeData();
             SetupLayout();
         }
@@ -56,7 +56,7 @@ namespace TeacherDashboard.Controls
 
         private void SetupLayout()
         {
-            TableLayoutPanel master = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 2, BackColor = Color.FromArgb(15, 15, 15) };
+            TableLayoutPanel master = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 2, BackColor = Color.White };
             master.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60)); // History
             master.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40)); // Compose
             master.RowStyles.Add(new RowStyle(SizeType.Absolute, 70)); // Header
@@ -77,7 +77,7 @@ namespace TeacherDashboard.Controls
             Panel pnlToolbar = new Panel() { Dock = DockStyle.Top, Height = 40 };
             Label lblHist = new Label() { Text = "PAST ANNOUNCEMENTS", ForeColor = Color.Gray, Font = new Font("Segoe UI", 12, FontStyle.Bold), AutoSize = true, Location = new Point(0, 5) };
             
-            cmbFilterTarget = new ComboBox() { Width = 200, Height = 30, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(40, 40, 40), ForeColor = Color.White, Font = new Font("Segoe UI", 9), Location = new Point(250, 2), DropDownStyle = ComboBoxStyle.DropDownList };
+            cmbFilterTarget = new ComboBox() { Width = 200, Height = 30, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, Font = new Font("Segoe UI", 9), Location = new Point(250, 2), DropDownStyle = ComboBoxStyle.DropDownList };
             cmbFilterTarget.Items.Add("Filter: All");
             cmbFilterTarget.Items.AddRange(new string[] { "All Teachers", "Department: CSE", "Department: ECE", "Department: BMS/BBI", "HODs Only", "Examination Cell" });
             cmbFilterTarget.SelectedIndex = 0;
@@ -89,7 +89,7 @@ namespace TeacherDashboard.Controls
             dgvAnnouncements = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dvAnnouncements, // Use DataView
-                BackgroundColor = Color.FromArgb(25, 25, 28), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
                 ColumnHeadersHeight = 40,
                 RowHeadersVisible = false,
@@ -97,8 +97,8 @@ namespace TeacherDashboard.Controls
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 RowTemplate = { Height = 45 }
             };
-            dgvAnnouncements.DefaultCellStyle.BackColor = Color.FromArgb(35, 35, 38);
-            dgvAnnouncements.DefaultCellStyle.ForeColor = Color.White;
+            dgvAnnouncements.DefaultCellStyle.BackColor = Color.White;
+            dgvAnnouncements.DefaultCellStyle.ForeColor = Color.RoyalBlue;
             dgvAnnouncements.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(64, 64, 64);
             dgvAnnouncements.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvAnnouncements.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
@@ -126,7 +126,7 @@ namespace TeacherDashboard.Controls
             master.Controls.Add(pnlLeft, 0, 1);
 
             // RIGHT: COMPOSE
-            pnlRight = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(30, 30, 32), Padding = new Padding(20) };
+            pnlRight = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(245, 245, 245), Padding = new Padding(20) };
             Label lblComp = new Label() { Text = "CREATE NEW ANNOUNCEMENT", ForeColor = Color.FromArgb(241, 196, 15), Font = new Font("Segoe UI", 12, FontStyle.Bold), Dock = DockStyle.Top, Height = 40 };
             Panel pnlForm = new Panel() { Dock = DockStyle.Fill, AutoScroll = true };
             
@@ -135,21 +135,21 @@ namespace TeacherDashboard.Controls
             
             // Target Audience
             Label lT = new Label() { Text = "Target Audience *", ForeColor = Color.Gray, Location = new Point(0, y), AutoSize = true };
-            cmbTarget = new ComboBox() { Location = new Point(0, y + 25), Width = 300, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, Font = new Font("Segoe UI", 10) };
+            cmbTarget = new ComboBox() { Location = new Point(0, y + 25), Width = 300, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, Font = new Font("Segoe UI", 10) };
             cmbTarget.Items.AddRange(new string[] { "All Teachers", "Department: CSE", "Department: ECE", "Department: BMS/BBI", "HODs Only", "Examination Cell" });
             pnlForm.Controls.AddRange(new Control[] { lT, cmbTarget });
             y += 70;
 
             // Type
             Label lType = new Label() { Text = "Announcement Type", ForeColor = Color.Gray, Location = new Point(0, y), AutoSize = true };
-            cmbType = new ComboBox() { Location = new Point(0, y + 25), Width = 300, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, Font = new Font("Segoe UI", 10) };
+            cmbType = new ComboBox() { Location = new Point(0, y + 25), Width = 300, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, Font = new Font("Segoe UI", 10) };
             cmbType.Items.AddRange(new string[] { "General Info", "Urgent Alert", "Meeting Request", "Holiday Notice" });
             pnlForm.Controls.AddRange(new Control[] { lType, cmbType });
             y += 70;
 
             // Content
             Label lC = new Label() { Text = "Message Content *", ForeColor = Color.Gray, Location = new Point(0, y), AutoSize = true };
-            txtContent = new TextBox() { Location = new Point(0, y + 25), Width = 300, Height = 120, Multiline = true, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
+            txtContent = new TextBox() { Location = new Point(0, y + 25), Width = 300, Height = 120, Multiline = true, BackColor = Color.White, ForeColor = Color.RoyalBlue, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
             pnlForm.Controls.AddRange(new Control[] { lC, txtContent });
             y += 160;
 
@@ -185,7 +185,7 @@ namespace TeacherDashboard.Controls
         private TextBox CreateInput(Panel p, string label, ref int y)
         {
             Label l = new Label() { Text = label, ForeColor = Color.Gray, Location = new Point(0, y), AutoSize = true };
-            TextBox t = new TextBox() { Location = new Point(0, y + 25), Width = 300, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
+            TextBox t = new TextBox() { Location = new Point(0, y + 25), Width = 300, BackColor = Color.White, ForeColor = Color.RoyalBlue, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
             p.Controls.AddRange(new Control[] { l, t });
             y += 70;
             return t;

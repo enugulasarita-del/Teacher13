@@ -29,7 +29,7 @@ namespace TeacherDashboard.Controls
         public ManageTeachersControl()
         {
             this.Dock = DockStyle.Fill;
-            this.BackColor = Color.FromArgb(15, 15, 15);
+            this.BackColor = Color.White;
             InitializeMockData();
             SetupBaseLayout();
             ShowDashboard();
@@ -74,15 +74,25 @@ namespace TeacherDashboard.Controls
         {
             this.Controls.Clear();
             
-            TableLayoutPanel master = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, BackColor = Color.FromArgb(28, 40, 51) }; // #1C2833
-            master.RowStyles.Add(new RowStyle(SizeType.Absolute, 70));
+            TableLayoutPanel master = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, BackColor = Color.White }; 
+            master.RowStyles.Add(new RowStyle(SizeType.Absolute, 130));
             master.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             this.Controls.Add(master);
 
             // HEADER
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(44, 62, 80) }; // #2C3E50
-            Label lblTitle = new Label() { Text = "TEACHER LIST & ROLE MANAGEMENT", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft, Padding = new Padding(20, 0, 0, 0) };
-            pnlHeader.Controls.Add(lblTitle);
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(30, 25, 30, 0) };
+            
+            FlowLayoutPanel tlpHead = new FlowLayoutPanel() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true };
+            
+            Label lblTitle = new Label() { Text = "👥 MANAGE FACULTY", Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true, Margin = new Padding(0, 0, 0, 5) };
+            Label lblSubtitle = new Label() { Text = "Manage teacher profiles, administrative roles, and institutional credentials", Font = new Font("Segoe UI", 11), ForeColor = Color.Gray, AutoSize = true, Margin = new Padding(4, 0, 0, 0) };
+            
+            tlpHead.Controls.Add(lblTitle);
+            tlpHead.Controls.Add(lblSubtitle);
+            pnlHeader.Controls.Add(tlpHead);
+
+            Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 4, BackColor = Color.FromArgb(173, 22, 37) };
+            pnlHeader.Controls.Add(pnlAccent);
             master.Controls.Add(pnlHeader, 0, 0);
 
             // CONTENT
@@ -114,7 +124,7 @@ namespace TeacherDashboard.Controls
                 ColumnCount = 2, 
                 RowCount = 1,
                 Padding = new Padding(0, 10, 0, 10),
-                BackColor = Color.FromArgb(15, 15, 15) // Solid match for dashboard
+                BackColor = Color.FromArgb(245, 245, 245) 
             };
             tlpToolbar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70f)); // Left: Filters
             tlpToolbar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30f)); // Right: Actions
@@ -123,7 +133,7 @@ namespace TeacherDashboard.Controls
             FlowLayoutPanel flpFilters = new FlowLayoutPanel() { Dock = DockStyle.Fill, WrapContents = false, AutoSize = true };
             
             // Search
-            txtSearch = new TextBox() { Width = 180, Height = 30, Font = new Font("Segoe UI", 10), Tag = "Search teachers...", BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle };
+            txtSearch = new TextBox() { Width = 180, Height = 30, Font = new Font("Segoe UI", 10), Tag = "Search teachers...", BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle };
             SetPlaceholder(txtSearch);
             txtSearch.TextChanged += FilterData;
             
@@ -132,7 +142,7 @@ namespace TeacherDashboard.Controls
             cmbFilterDesg = CreateFilterCombo("Desg", new string[] { "Professor", "Associate Prof", "Assistant Prof", "Lecturer" });
             cmbFilterStatus = CreateFilterCombo("Status", new string[] { "Active", "Inactive" });
 
-            Button btnClear = new Button() { Text = "↺", Width = 35, Height = 28, FlatStyle = FlatStyle.Flat, ForeColor = Color.LightGray, BackColor = Color.FromArgb(45,45,48), Cursor = Cursors.Hand };
+            Button btnClear = new Button() { Text = "↺", Width = 35, Height = 28, FlatStyle = FlatStyle.Flat, ForeColor = Color.FromArgb(40, 40, 40), BackColor = Color.White, Cursor = Cursors.Hand };
             btnClear.Click += (s, e) => { txtSearch.Text = ""; cmbFilterDept.SelectedIndex = 0; cmbFilterDesg.SelectedIndex = 0; cmbFilterStatus.SelectedIndex = 0; SetPlaceholder(txtSearch); };
 
             flpFilters.Controls.AddRange(new Control[] { txtSearch, cmbFilterDept, cmbFilterDesg, cmbFilterStatus, btnClear });
@@ -155,19 +165,19 @@ namespace TeacherDashboard.Controls
             // --- FEATURE 1: TABLE ---
             DataGridView dgv = new DataGridView() { 
                 Dock = DockStyle.Fill, DataSource = dvTeachers,
-                BackgroundColor = Color.FromArgb(44, 62, 80), BorderStyle = BorderStyle.None, // #2C3E50
+                BackgroundColor = Color.White, BorderStyle = BorderStyle.None, // Fixed for Red/White
                 EnableHeadersVisualStyles = false, ColumnHeadersHeight = 45, AllowUserToAddRows = false,
                 RowHeadersVisible = false, SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, RowTemplate = { Height = 40 }
             };
             
-            dgv.DefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94); // #34495E
-            dgv.DefaultCellStyle.ForeColor = Color.White;
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9);
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(28, 40, 51); // #1C2833
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(173, 22, 37);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80); // #2C3E50
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
 
             // Action Buttons Columns
             AddGridButton(dgv, "Edit", "✏️", Color.FromArgb(52, 152, 219));
@@ -224,8 +234,8 @@ namespace TeacherDashboard.Controls
             pnlMainContainer.Controls.Add(tlpForm);
 
             // LEFT: BASIC INFO
-            Panel pnlL = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(30, 30, 32), Padding = new Padding(20) };
-            Label lblL = new Label() { Text = isEdit ? "EDIT TEACHER DETAILS" : "NEW TEACHER PROFILE", Dock = DockStyle.Top, Height = 40, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.White };
+            Panel pnlL = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(20) };
+            Label lblL = new Label() { Text = isEdit ? "EDIT TEACHER DETAILS" : "NEW TEACHER PROFILE", Dock = DockStyle.Top, Height = 40, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(40, 40, 40) };
             Panel pnlFields = new Panel() { Dock = DockStyle.Fill, AutoScroll = true };
             
             int y = 0;
@@ -245,8 +255,8 @@ namespace TeacherDashboard.Controls
             tlpForm.Controls.Add(pnlL, 0, 0);
 
             // RIGHT: ROLE ASSIGNMENT
-            Panel pnlR = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(25, 25, 28), Padding = new Padding(20) };
-            Label lblR = new Label() { Text = "ASSIGN ROLES", Dock = DockStyle.Top, Height = 40, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(241, 196, 15) };
+            Panel pnlR = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(245, 245, 245), Padding = new Padding(20) };
+            Label lblR = new Label() { Text = "ASSIGN ROLES", Dock = DockStyle.Top, Height = 40, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37) };
             FlowLayoutPanel flpRoles = new FlowLayoutPanel() { Dock = DockStyle.Fill, AutoScroll = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
             
             roleCheckboxes = new Dictionary<string, CheckBox>();
@@ -362,11 +372,11 @@ namespace TeacherDashboard.Controls
 
         private Panel CreateKpi(string t, string v, Color c)
         {
-            Panel p = new Panel() { Width = 240, Height = 95, BackColor = Color.FromArgb(52, 73, 94), Margin = new Padding(0, 0, 20, 0) }; // #34495E
+            Panel p = new Panel() { Width = 240, Height = 95, BackColor = Color.White, Margin = new Padding(0, 0, 20, 0) };
             p.Controls.Add(new Panel() { Dock = DockStyle.Left, Width = 6, BackColor = c });
             
-            Label lblVal = new Label() { Text = v, ForeColor = Color.White, Location = new Point(15, 35), AutoSize = true, Font = new Font("Segoe UI", 24, FontStyle.Bold) };
-            Label lblTitle = new Label() { Text = t, ForeColor = Color.DarkGray, Location = new Point(15, 12), AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            Label lblVal = new Label() { Text = v, ForeColor = Color.RoyalBlue, Location = new Point(15, 35), AutoSize = true, Font = new Font("Segoe UI", 24, FontStyle.Bold) };
+            Label lblTitle = new Label() { Text = t, ForeColor = Color.Gray, Location = new Point(15, 12), AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold) };
             
             p.Controls.Add(lblVal);
             p.Controls.Add(lblTitle);
@@ -375,8 +385,8 @@ namespace TeacherDashboard.Controls
 
         private TextBox CreateInput(Panel p, string l, string v, ref int y)
         {
-            p.Controls.Add(new Label() { Text = l, ForeColor = Color.Silver, Location = new Point(0, y), AutoSize = true });
-            TextBox t = new TextBox() { Text = v, Location = new Point(0, y + 25), Width = 300, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
+            p.Controls.Add(new Label() { Text = l, ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(0, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) });
+            TextBox t = new TextBox() { Text = v, Location = new Point(0, y + 25), Width = 300, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10) };
             p.Controls.Add(t);
             y += 65;
             return t;
@@ -384,8 +394,8 @@ namespace TeacherDashboard.Controls
 
         private ComboBox CreateDropdown(Panel p, string l, string[] i, string v, ref int y)
         {
-            p.Controls.Add(new Label() { Text = l, ForeColor = Color.Silver, Location = new Point(0, y), AutoSize = true });
-            ComboBox c = new ComboBox() { Text = v, Location = new Point(0, y + 25), Width = 300, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 10) };
+            p.Controls.Add(new Label() { Text = l, ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(0, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) });
+            ComboBox c = new ComboBox() { Text = v, Location = new Point(0, y + 25), Width = 300, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 10) };
             c.Items.AddRange(i);
             p.Controls.Add(c);
             y += 65;
@@ -394,7 +404,7 @@ namespace TeacherDashboard.Controls
 
         private ComboBox CreateFilterCombo(string label, string[] items)
         {
-            ComboBox c = new ComboBox() { Width = 140, Height = 30, BackColor = Color.FromArgb(40, 40, 40), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9), Margin = new Padding(5, 0, 5, 0) };
+            ComboBox c = new ComboBox() { Width = 140, Height = 30, BackColor = Color.White, ForeColor = Color.FromArgb(40, 40, 40), FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9), Margin = new Padding(5, 0, 5, 0) };
             c.Items.Add("Filter " + label);
             c.Items.AddRange(items);
             c.SelectedIndex = 0;
@@ -404,7 +414,7 @@ namespace TeacherDashboard.Controls
 
         private void SetPlaceholder(TextBox t) { 
             t.Text = t.Tag.ToString(); t.ForeColor = Color.Gray; 
-            t.GotFocus += (s, e) => { if(t.Text == t.Tag.ToString()) { t.Text = ""; t.ForeColor = Color.White; } };
+            t.GotFocus += (s, e) => { if(t.Text == t.Tag.ToString()) { t.Text = ""; t.ForeColor = Color.FromArgb(40, 40, 40); } };
             t.LostFocus += (s, e) => { if(string.IsNullOrWhiteSpace(t.Text)) { t.Text = t.Tag.ToString(); t.ForeColor = Color.Gray; } };
         }
 
@@ -416,9 +426,9 @@ namespace TeacherDashboard.Controls
         }
         
         private void AddRoleCategory(FlowLayoutPanel p, string cat, string[] roles, string existing) {
-            p.Controls.Add(new Label() { Text = cat, ForeColor = Color.FromArgb(241, 196, 15), Font = new Font("Segoe UI", 10, FontStyle.Bold), AutoSize = true, Margin = new Padding(0, 15, 0, 5) });
+            p.Controls.Add(new Label() { Text = cat, ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 10, FontStyle.Bold), AutoSize = true, Margin = new Padding(0, 15, 0, 5) });
             foreach(string r in roles) {
-                CheckBox c = new CheckBox() { Text = r, ForeColor = Color.White, AutoSize = true, Margin = new Padding(10, 2, 0, 2) };
+                CheckBox c = new CheckBox() { Text = r, ForeColor = Color.FromArgb(40, 40, 40), AutoSize = true, Margin = new Padding(10, 2, 0, 2) };
                 if (existing.Contains(r)) c.Checked = true;
                 roleCheckboxes[r] = c;
                 p.Controls.Add(c);

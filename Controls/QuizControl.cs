@@ -20,7 +20,7 @@ namespace TeacherDashboard.Controls
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
-            this.BackColor = Color.FromArgb(18, 18, 18); // Dark Theme Background
+            this.BackColor = Color.White; // Deep Aurora Navy Background
 
             SetupRobustLayout();
             LoadDummyData();
@@ -55,7 +55,7 @@ namespace TeacherDashboard.Controls
             // --- 1. HEADER (Spans Both Columns) ---
             Panel pnlHeader = new Panel() { 
                 Dock = DockStyle.Fill, 
-                BackColor = Color.FromArgb(173, 22, 37), 
+                BackColor = Color.White, 
                 Padding = new Padding(25, 0, 0, 0),
                 Margin = new Padding(0) 
             };
@@ -74,7 +74,7 @@ namespace TeacherDashboard.Controls
             // --- 2. LEFT PANEL (Input Form) ---
             Panel pnlLeft = new Panel() { 
                 Dock = DockStyle.Fill, 
-                BackColor = Color.FromArgb(28, 28, 30), 
+                BackColor = Color.White, 
                 Padding = new Padding(20),
                 Margin = new Padding(0)
             };
@@ -101,8 +101,8 @@ namespace TeacherDashboard.Controls
             cmbCorrect = new ComboBox() { 
                 Width = 300, 
                 DropDownStyle = ComboBoxStyle.DropDownList, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
                 FlatStyle = FlatStyle.Flat, 
                 Font = new Font("Segoe UI", 10), 
                 Margin = new Padding(10, 5, 0, 20) 
@@ -123,10 +123,10 @@ namespace TeacherDashboard.Controls
 
             // Buttons
             FlowLayoutPanel flpBtns = new FlowLayoutPanel() { AutoSize = true, FlowDirection = FlowDirection.LeftToRight, Margin = new Padding(10, 10, 0, 20) };
-            Button btnAdd = new Button() { Text = "➕ ADD", Width = 120, Height = 40, BackColor = Color.FromArgb(46, 204, 113), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand, Margin = new Padding(0, 0, 10, 0) };
+            Button btnAdd = new Button() { Text = "➕ ADD", Width = 120, Height = 40, BackColor = Color.FromArgb(173, 22, 37), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand, Margin = new Padding(0, 0, 10, 0) };
             btnAdd.FlatAppearance.BorderSize = 0; btnAdd.Click += BtnAdd_Click;
             
-            Button btnClear = new Button() { Text = "🧹 CLEAR", Width = 120, Height = 40, BackColor = Color.FromArgb(50, 50, 55), ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand };
+            Button btnClear = new Button() { Text = "🧹 CLEAR", Width = 120, Height = 40, BackColor = Color.White, ForeColor = Color.FromArgb(173, 22, 37), FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9, FontStyle.Bold), Cursor = Cursors.Hand };
             btnClear.FlatAppearance.BorderSize = 0; btnClear.Click += (s, e) => ClearForm();
             
             flpBtns.Controls.Add(btnAdd); 
@@ -136,13 +136,13 @@ namespace TeacherDashboard.Controls
             // --- 3. RIGHT PANEL (Preview List) ---
             Panel pnlRight = new Panel() { 
                 Dock = DockStyle.Fill, 
-                BackColor = Color.FromArgb(24, 25, 26), 
+                BackColor = Color.White, 
                 Padding = new Padding(20),
                 Margin = new Padding(0)
             };
             mainGrid.Controls.Add(pnlRight, 1, 1);
 
-            Label lblPreview = new Label() { Text = "QUIZ PREVIEW & LIVE LIST", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.White, Dock = DockStyle.Top, Height = 40 };
+            Label lblPreview = new Label() { Text = "QUIZ PREVIEW & LIVE LIST", Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), Dock = DockStyle.Top, Height = 40 };
             pnlRight.Controls.Add(lblPreview);
 
             Button btnPub = new Button() { 
@@ -167,10 +167,10 @@ namespace TeacherDashboard.Controls
 
         private void AddInputGroup(FlowLayoutPanel p, string label, out TextBox txt, int height)
         {
-            Label l = new Label() { Text = label, ForeColor = Color.LightGray, AutoSize = true, Font = new Font("Segoe UI", 9), Margin = new Padding(10, 10, 0, 5) };
+            Label l = new Label() { Text = label, ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), Margin = new Padding(10, 10, 0, 5) };
             txt = new TextBox() { 
-                Width = 350, Height = height, Multiline = height > 30, BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10), Margin = new Padding(10, 0, 0, 15)
+                Width = 350, Height = height, Multiline = height > 30, BackColor = Color.White, 
+                ForeColor = Color.FromArgb(40, 40, 40), BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 10), Margin = new Padding(10, 0, 0, 15)
             };
             p.Controls.Add(l);
             p.Controls.Add(txt);
@@ -178,7 +178,7 @@ namespace TeacherDashboard.Controls
 
         private Label CreateLabel(string text)
         {
-            return new Label() { Text = text, ForeColor = Color.LightGray, AutoSize = true, Font = new Font("Segoe UI", 9), Margin = new Padding(10, 10, 0, 5) };
+            return new Label() { Text = text, ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), Margin = new Padding(10, 10, 0, 5) };
         }
 
         private void BtnAdd_Click(object sender, EventArgs e)
@@ -212,7 +212,7 @@ namespace TeacherDashboard.Controls
             // Card Background
             Panel card = new Panel() { 
                 Dock = DockStyle.Fill,
-                BackColor = Color.FromArgb(35, 35, 40), 
+                BackColor = Color.FromArgb(245, 245, 245), 
                 Padding = new Padding(15)
             };
             container.Controls.Add(card);
@@ -235,7 +235,7 @@ namespace TeacherDashboard.Controls
             Label lQ = new Label() { 
                 Text = $"{quizItems.IndexOf(item) + 1}. {item.Question}", 
                 Font = new Font("Segoe UI", 10, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
                 Dock = DockStyle.Top, 
                 AutoSize = true,
                 MaximumSize = new Size(0, 45), // Limit height
@@ -247,7 +247,7 @@ namespace TeacherDashboard.Controls
             Label lA = new Label() { 
                 Text = $"Correct: {item.Options[item.CorrectIndex]}", 
                 Font = new Font("Segoe UI", 9, FontStyle.Italic), 
-                ForeColor = Color.FromArgb(46, 204, 113), 
+                ForeColor = Color.FromArgb(173, 22, 37), 
                 Dock = DockStyle.Bottom, 
                 Height = 25
             };

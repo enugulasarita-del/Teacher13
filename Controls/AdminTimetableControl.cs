@@ -11,8 +11,8 @@ namespace TeacherDashboard.Controls
         private DataTable dtSchedule;
         private DataTable dtTeachers;
         private Color primaryColor = Color.FromArgb(173, 22, 37);
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
         private FlowLayoutPanel flpStats;
 
         public AdminTimetableControl()
@@ -57,6 +57,21 @@ namespace TeacherDashboard.Controls
             dtSchedule.Rows.Add("BSc DS-2", "Data Science", "Mr. Sunil Gavaskar", "Friday", "09:00-10:00", "Lab-202");
             dtSchedule.Rows.Add("BSc IT-1", "Soft Skills", "Dr. Aditi Rao", "Monday", "11:00-12:00", "Room-306");
             
+            // Infrastructure Data
+            DataTable dtRooms = new DataTable();
+            dtRooms.Columns.Add("RoomNo");
+            dtRooms.Columns.Add("Type");
+            dtRooms.Columns.Add("Capacity");
+            dtRooms.Columns.Add("Status");
+            dtRooms.Rows.Add("Lab-301", "Computer Lab", "45", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Lab-302", "Hardware Lab", "30", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Room-101", "Smart Class", "60", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Room-201", "Lecture Hall", "120", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Lab-202", "Data Science Lab", "40", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Room-405", "Classroom", "50", "✅ AVAILABLE");
+            dtRooms.Rows.Add("Room-306", "Seminar Room", "80", "✅ AVAILABLE");
+            this.Tag = dtRooms;
+            
             // Add a sample conflict for demonstration
             dtSchedule.Rows.Add("BSc IT-3", "Cyber Security", "Dr. Rajesh Kumar", "Monday", "09:00-10:00", "Room-102");
         }
@@ -71,21 +86,23 @@ namespace TeacherDashboard.Controls
             TableLayoutPanel rootLayout = new TableLayoutPanel();
             rootLayout.Dock = DockStyle.Fill;
             rootLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 85F)); // Header
+            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 140F)); // Header
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F)); // Body
             this.Controls.Add(rootLayout);
 
             // Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(25, 25, 25) };
-            Label lblTitle = new Label() { 
-                Text = "📅  TIMETABLE & TEACHER ASSIGNMENT", 
-                Font = new Font("Segoe UI", 18, FontStyle.Bold), 
-                ForeColor = Color.White, 
-                Location = new Point(30, 25), 
-                AutoSize = true 
-            };
-            pnlHeader.Controls.Add(lblTitle);
-            Panel accent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 140, BackColor = Color.White, Padding = new Padding(30, 25, 30, 0) };
+            
+            FlowLayoutPanel tlpHead = new FlowLayoutPanel() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true };
+            
+            Label lblTitle = new Label() { Text = "🗓️ MASTER TIMETABLE", Font = new Font("Segoe UI", 22, FontStyle.Bold), ForeColor = primaryColor, AutoSize = true, Margin = new Padding(0, 0, 0, 5) };
+            Label lblSubtitle = new Label() { Text = "Optimize faculty assignments and monitor daily academic schedules", Font = new Font("Segoe UI", 11), ForeColor = Color.Gray, AutoSize = true, Margin = new Padding(4, 0, 0, 0) };
+            
+            tlpHead.Controls.Add(lblTitle);
+            tlpHead.Controls.Add(lblSubtitle);
+            pnlHeader.Controls.Add(tlpHead);
+
+            Panel accent = new Panel() { Dock = DockStyle.Bottom, Height = 5, BackColor = primaryColor };
             pnlHeader.Controls.Add(accent);
             rootLayout.Controls.Add(pnlHeader, 0, 0);
 
@@ -98,12 +115,12 @@ namespace TeacherDashboard.Controls
                 ColumnCount = 1, 
                 RowCount = 4,
                 AutoSize = true,
-                Padding = new Padding(0, 0, 20, 0) // Leave space for scrollbar
+                Padding = new Padding(0, 0, 0, 80) // Increased bottom padding
             };
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.AutoSize)); // Stats (Flexible)
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));  // Toolbar
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 500F)); // Schedule Grid
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 400F)); // Teacher List
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 160F)); // 1. Stats (Increased)
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F)); // 2. Toolbar (Increased)
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 550F)); // 3. Schedule Grid
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 550F)); // 4. Room Monitoring 
             pnlBody.Controls.Add(tlpMain);
 
             // 1. STATISTICS CARDS
@@ -111,50 +128,60 @@ namespace TeacherDashboard.Controls
                 Dock = DockStyle.Fill, 
                 WrapContents = true, 
                 AutoScroll = true,
-                Padding = new Padding(0, 0, 0, 10)
+                Padding = new Padding(0, 5, 0, 20) // Increased bottom padding
             };
             UpdateStats();
             tlpMain.Controls.Add(flpStats, 0, 0);
 
             // 2. TOOLBAR
-            Panel pnlToolbar = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(0, 10, 0, 10) };
-            Button btnAddAssignment = new Button() { 
-                Text = "+ Assign Teacher to Class", 
-                Width = 200, 
-                Height = 40, 
-                BackColor = Color.FromArgb(46, 204, 113), 
-                ForeColor = Color.White, 
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location = new Point(0, 10)
-            };
-            btnAddAssignment.FlatAppearance.BorderSize = 0;
-            btnAddAssignment.Click += (s, e) => ShowAssignmentForm(null);
-            
+            Panel pnlToolbar = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(20, 10, 20, 10), BackColor = Color.FromArgb(245, 245, 245) };
             Button btnExport = new Button() { 
-                Text = "📥 Export Schedule", 
-                Width = 160, 
-                Height = 40, 
+                Text = "📥 EXPORT", 
+                Width = 120, 
+                Height = 36, 
                 BackColor = Color.FromArgb(52, 152, 219), 
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                Location = new Point(220, 10)
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Location = new Point(720, 32)
             };
             btnExport.FlatAppearance.BorderSize = 0;
             btnExport.Click += (s, e) => MessageBox.Show("Exporting timetable to Excel...", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
             
-            pnlToolbar.Controls.AddRange(new Control[] { btnAddAssignment, btnExport });
-            
-            Label lblFilter = new Label() { Text = "🔍 Filter by Teacher:", ForeColor = Color.Gray, Location = new Point(410, 18), AutoSize = true, Font = new Font("Segoe UI", 9) };
-            ComboBox cmbFilterTeacher = new ComboBox() { 
-                Location = new Point(540, 15), 
-                Width = 200, 
-                BackColor = Color.FromArgb(45, 45, 48), 
+            Button btnAddAssignment = new Button() { 
+                Text = "+ ASSIGN TEACHER", 
+                Width = 180, 
+                Height = 36, 
+                BackColor = Color.FromArgb(46, 204, 113), 
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Location = new Point(0, 32)
+            };
+            btnAddAssignment.FlatAppearance.BorderSize = 0;
+            btnAddAssignment.Click += (s, e) => ShowAssignmentForm(null);
+            
+            pnlToolbar.Controls.AddRange(new Control[] { btnAddAssignment, btnExport });
+            
+            Label lblFilter = new Label() { 
+                Text = "SELECT TEACHER", 
+                ForeColor = Color.FromArgb(173, 22, 37), 
+                Location = new Point(450, 10), 
+                AutoSize = true, 
+                Font = new Font("Segoe UI", 9, FontStyle.Bold) 
+            };
+            ComboBox cmbFilterTeacher = new ComboBox() { 
+                Location = new Point(450, 32), 
+                Width = 220, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
+                FlatStyle = FlatStyle.Flat,
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 9) 
+                Font = new Font("Segoe UI", 10) 
+            };
+            // Add border
+            cmbFilterTeacher.Paint += (s, e) => {
+                e.Graphics.DrawRectangle(new Pen(Color.FromArgb(180, 180, 180), 1), 0, 0, cmbFilterTeacher.Width - 1, cmbFilterTeacher.Height - 1);
             };
             cmbFilterTeacher.Items.Add("All Teachers");
             foreach(DataRow r in dtTeachers.Rows) cmbFilterTeacher.Items.Add(r["Name"].ToString());
@@ -178,13 +205,13 @@ namespace TeacherDashboard.Controls
                 Dock = DockStyle.Top, 
                 Height = 40, 
                 Font = new Font("Segoe UI", 12, FontStyle.Bold), 
-                ForeColor = Color.White 
+                ForeColor = Color.FromArgb(173, 22, 37) 
             };
             
             DataGridView dgvSchedule = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dtSchedule,
-                BackgroundColor = Color.FromArgb(44, 62, 80), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
                 EnableHeadersVisualStyles = false, 
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
@@ -196,13 +223,13 @@ namespace TeacherDashboard.Controls
                 RowTemplate = { Height = 45 }
             };
             
-            dgvSchedule.DefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
-            dgvSchedule.DefaultCellStyle.ForeColor = Color.White;
+            dgvSchedule.DefaultCellStyle.BackColor = Color.White;
+            dgvSchedule.DefaultCellStyle.ForeColor = Color.RoyalBlue;
             dgvSchedule.DefaultCellStyle.Font = new Font("Segoe UI", 9);
-            dgvSchedule.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(28, 40, 51);
+            dgvSchedule.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(173, 22, 37);
             dgvSchedule.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvSchedule.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dgvSchedule.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
+            dgvSchedule.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
 
             // Add action buttons
             DataGridViewButtonColumn btnEdit = new DataGridViewButtonColumn() { 
@@ -246,62 +273,76 @@ namespace TeacherDashboard.Controls
                 if (colName == "Delete") DeleteAssignment(drv.Row);
             };
 
-            pnlSchedule.Controls.Add(dgvSchedule);
             pnlSchedule.Controls.Add(lblScheduleTitle);
-            lblScheduleTitle.BringToFront();
+            pnlSchedule.Controls.Add(dgvSchedule);
+            dgvSchedule.BringToFront(); 
+            pnlSchedule.Padding = new Padding(15, 30, 15, 15); // Top padding for gap
             tlpMain.Controls.Add(pnlSchedule, 0, 2);
 
-            // 4. AVAILABLE TEACHERS LIST
-            Panel pnlTeachers = new Panel() { Dock = DockStyle.Fill, BackColor = cardBg, Padding = new Padding(15), Margin = new Padding(0, 20, 0, 0) };
-            Label lblTeachersTitle = new Label() { 
-                Text = "AVAILABLE FACULTY", 
-                Dock = DockStyle.Top, 
-                Height = 40, 
-                Font = new Font("Segoe UI", 12, FontStyle.Bold), 
-                ForeColor = Color.White 
-            };
-            
-            DataGridView dgvTeachers = new DataGridView() { 
-                Dock = DockStyle.Fill, 
-                DataSource = dtTeachers,
-                BackgroundColor = Color.FromArgb(44, 62, 80), 
-                BorderStyle = BorderStyle.None,
-                EnableHeadersVisualStyles = false, 
-                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
-                ColumnHeadersHeight = 55, 
-                AllowUserToAddRows = false,
-                RowHeadersVisible = false, 
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, 
-                RowTemplate = { Height = 45 }
-            };
-            
-            dgvTeachers.DefaultCellStyle.BackColor = Color.FromArgb(52, 73, 94);
-            dgvTeachers.DefaultCellStyle.ForeColor = Color.White;
-            dgvTeachers.DefaultCellStyle.Font = new Font("Segoe UI", 9);
-            dgvTeachers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(28, 40, 51);
-            dgvTeachers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvTeachers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dgvTeachers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(44, 62, 80);
-
-            dgvTeachers.DataBindingComplete += (s, e) => {
-                if (!dgvTeachers.Columns.Contains("Workload"))
-                {
-                    DataGridViewProgressColumn progressCol = new DataGridViewProgressColumn() {
-                        Name = "Workload",
-                        HeaderText = "Weekly Load (Hours)",
-                        DataPropertyName = "LoadHours",
-                        Width = 150
-                    };
-                    dgvTeachers.Columns.Add(progressCol);
+            // 4. CAMPUS RESOURCE & ROOM MONITORING
+            Panel pnlRoomSect = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(15), Margin = new Padding(0, 30, 0, 0) };
+            pnlRoomSect.Paint += (s, e) => {
+                using (Pen pen = new Pen(Color.FromArgb(230, 230, 230), 1)) {
+                    e.Graphics.DrawRectangle(pen, 0, 0, pnlRoomSect.Width - 1, pnlRoomSect.Height - 1);
                 }
             };
 
-            pnlTeachers.Controls.Add(dgvTeachers);
-            pnlTeachers.Controls.Add(lblTeachersTitle);
-            lblTeachersTitle.BringToFront();
-            tlpMain.Controls.Add(pnlTeachers, 0, 3);
-            
+            Label lblRoomTitle = new Label() { 
+                Text = "🏙️ INFRASTRUCTURE & ROOM OCCUPANCY TRACKER", 
+                Dock = DockStyle.Top, 
+                Height = 35, 
+                Font = new Font("Segoe UI", 12, FontStyle.Bold), 
+                ForeColor = primaryColor 
+            };
+
+            DataGridView dgvRooms = new DataGridView() { 
+                Dock = DockStyle.Fill, 
+                DataSource = (DataTable)this.Tag,
+                BackgroundColor = Color.White, 
+                BorderStyle = BorderStyle.None,
+                EnableHeadersVisualStyles = false,
+                RowHeadersVisible = false,
+                AllowUserToAddRows = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                RowTemplate = { Height = 40 },
+                ColumnHeadersHeight = 45
+            };
+            dgvRooms.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 45);
+            dgvRooms.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvRooms.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+
+            dgvRooms.DataBindingComplete += (s, e) => {
+                if (!dgvRooms.Columns.Contains("Status")) {
+                    dgvRooms.Columns.Add(new DataGridViewTextBoxColumn() { Name = "Status", HeaderText = "Live Status", Width = 150 });
+                    dgvRooms.Columns.Add(new DataGridViewTextBoxColumn() { Name = "ActiveSub", HeaderText = "Scheduled Subject", Width = 200 });
+                }
+            };
+
+            dgvRooms.CellFormatting += (s, e) => {
+                if (e.RowIndex < 0) return;
+                string roomNo = dgvRooms.Rows[e.RowIndex].Cells["RoomNo"].Value?.ToString();
+                if (string.IsNullOrEmpty(roomNo)) return;
+
+                DataRow assigned = dtSchedule.AsEnumerable().FirstOrDefault(r => r["Room"].ToString() == roomNo);
+
+                if (dgvRooms.Columns[e.ColumnIndex].Name == "Status") {
+                    if (assigned != null) { e.Value = "🛑 BUSY"; e.CellStyle.ForeColor = Color.FromArgb(192, 57, 43); }
+                    else { e.Value = "✅ AVAILABLE"; e.CellStyle.ForeColor = Color.FromArgb(39, 174, 96); }
+                    e.CellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                }
+                if (dgvRooms.Columns[e.ColumnIndex].Name == "ActiveSub") {
+                    e.Value = assigned != null ? assigned["Subject"].ToString() + " (" + assigned["Class"].ToString() + ")" : "---";
+                    e.CellStyle.ForeColor = Color.FromArgb(100, 100, 100);
+                }
+            };
+
+            pnlRoomSect.Controls.Add(dgvRooms);
+            pnlRoomSect.Controls.Add(lblRoomTitle);
+            dgvRooms.BringToFront();
+            pnlRoomSect.Padding = new Padding(15, 40, 15, 15); // Top padding for gap from grid above
+            tlpMain.Controls.Add(pnlRoomSect, 0, 3);
+
             UpdateTeacherLoad();
         }
 
@@ -328,13 +369,23 @@ namespace TeacherDashboard.Controls
 
         private Panel CreateStatCard(string title, string value, Color color)
         {
-            Panel p = new Panel() { Width = 250, Height = 110, BackColor = cardBg, Margin = new Padding(0, 0, 20, 0) };
-            Panel bar = new Panel() { Dock = DockStyle.Top, Height = 4, BackColor = color };
+            Panel p = new Panel() { Width = 260, Height = 120, BackColor = cardBg, Margin = new Padding(0, 0, 25, 10) };
+            p.Paint += (s, e) => ControlPaint.DrawBorder(e.Graphics, p.ClientRectangle, Color.FromArgb(240, 240, 240), ButtonBorderStyle.Solid);
             
-            Label lblT = new Label() { Text = title, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.Gray, Location = new Point(15, 20), AutoSize = true };
-            Label lblV = new Label() { Text = value, Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.White, Location = new Point(15, 45), AutoSize = true };
+            Panel bar = new Panel() { Dock = DockStyle.Top, Height = 5, BackColor = color };
             
-            p.Controls.AddRange(new Control[] { bar, lblT, lblV });
+            TableLayoutPanel tlp = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, Padding = new Padding(15, 10, 15, 10) };
+            tlp.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            
+            Label lblT = new Label() { Text = title, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.Gray, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft };
+            Label lblV = new Label() { Text = value, Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.RoyalBlue, Dock = DockStyle.Fill, TextAlign = ContentAlignment.BottomLeft };
+            
+            tlp.Controls.Add(lblT, 0, 0);
+            tlp.Controls.Add(lblV, 0, 1);
+            
+            p.Controls.Add(tlp);
+            p.Controls.Add(bar);
             return p;
         }
 
@@ -346,7 +397,7 @@ namespace TeacherDashboard.Controls
                 Text = isEdit ? "Edit Assignment" : "New Teacher Assignment", 
                 Size = new Size(500, 450), 
                 StartPosition = FormStartPosition.CenterParent,
-                BackColor = Color.FromArgb(30, 30, 33),
+                BackColor = Color.White,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
                 MinimizeBox = false
@@ -354,34 +405,36 @@ namespace TeacherDashboard.Controls
 
             int y = 20;
             
-            Label lblClass = new Label() { Text = "Class/Division *", ForeColor = Color.White, Location = new Point(20, y), AutoSize = true };
+            Label lblClass = new Label() { Text = "Class/Division *", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(20, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             TextBox txtClass = new TextBox() { 
                 Text = isEdit ? row["Class"].ToString() : "", 
                 Location = new Point(20, y + 25), 
                 Width = 440, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
+                BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Segoe UI", 10) 
             };
             y += 70;
 
-            Label lblSubject = new Label() { Text = "Subject *", ForeColor = Color.White, Location = new Point(20, y), AutoSize = true };
+            Label lblSubject = new Label() { Text = "Subject *", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(20, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             TextBox txtSubject = new TextBox() { 
                 Text = isEdit ? row["Subject"].ToString() : "", 
                 Location = new Point(20, y + 25), 
                 Width = 440, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
+                BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Segoe UI", 10) 
             };
             y += 70;
 
-            Label lblTeacher = new Label() { Text = "Teacher *", ForeColor = Color.White, Location = new Point(20, y), AutoSize = true };
+            Label lblTeacher = new Label() { Text = "Teacher *", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(20, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             ComboBox cmbTeacher = new ComboBox() { 
                 Location = new Point(20, y + 25), 
                 Width = 440, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
                 FlatStyle = FlatStyle.Flat,
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 10) 
@@ -391,12 +444,12 @@ namespace TeacherDashboard.Controls
             if(isEdit) cmbTeacher.Text = row["Teacher"].ToString();
             y += 70;
 
-            Label lblDay = new Label() { Text = "Day *", ForeColor = Color.White, Location = new Point(20, y), AutoSize = true };
+            Label lblDay = new Label() { Text = "Day *", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(20, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             ComboBox cmbDay = new ComboBox() { 
                 Location = new Point(20, y + 25), 
                 Width = 200, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
                 FlatStyle = FlatStyle.Flat,
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Font = new Font("Segoe UI", 10) 
@@ -404,24 +457,26 @@ namespace TeacherDashboard.Controls
             cmbDay.Items.AddRange(new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" });
             if(isEdit) cmbDay.Text = row["Day"].ToString();
             
-            Label lblTime = new Label() { Text = "Time *", ForeColor = Color.White, Location = new Point(240, y), AutoSize = true };
+            Label lblTime = new Label() { Text = "Time *", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(240, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             TextBox txtTime = new TextBox() { 
                 Text = isEdit ? row["Time"].ToString() : "09:00-10:00", 
                 Location = new Point(240, y + 25), 
                 Width = 220, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
+                BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Segoe UI", 10) 
             };
             y += 70;
 
-            Label lblRoom = new Label() { Text = "Room/Lab", ForeColor = Color.White, Location = new Point(20, y), AutoSize = true };
+            Label lblRoom = new Label() { Text = "Room/Lab", ForeColor = Color.FromArgb(173, 22, 37), Location = new Point(20, y), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold) };
             TextBox txtRoom = new TextBox() { 
                 Text = isEdit ? row["Room"].ToString() : "", 
                 Location = new Point(20, y + 25), 
                 Width = 440, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.RoyalBlue, 
+                BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Segoe UI", 10) 
             };
             y += 70;
@@ -587,7 +642,7 @@ namespace TeacherDashboard.Controls
             Rectangle progressRect = new Rectangle(cellBounds.X + margin, cellBounds.Y + margin, cellBounds.Width - (margin * 2), cellBounds.Height - (margin * 2));
             
             // Draw Progress BG
-            g.FillRectangle(new SolidBrush(Color.FromArgb(50, 255, 255, 255)), progressRect);
+            g.FillRectangle(new SolidBrush(Color.FromArgb(230, 230, 230)), progressRect);
 
             // Draw Progress Fill
             Color barColor = percentage > 0.8 ? Color.FromArgb(231, 76, 60) : (percentage > 0.5 ? Color.FromArgb(241, 196, 15) : Color.FromArgb(46, 204, 113));
@@ -595,7 +650,7 @@ namespace TeacherDashboard.Controls
 
             // Draw Text
             string text = $"{progressVal}% Load";
-            TextRenderer.DrawText(g, text, cellStyle.Font, progressRect, Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            TextRenderer.DrawText(g, text, cellStyle.Font, progressRect, Color.RoyalBlue, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
         }
     }
 }

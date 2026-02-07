@@ -15,10 +15,10 @@ namespace TeacherDashboard.Controls
         private void SetupStrictLayout()
         {
             this.Controls.Clear();
-            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.BackColor = Color.FromArgb(11, 14, 26);
 
             // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(173, 22, 37) };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(25, 30, 56) };
             Label lblMain = new Label() { Text = "FACULTY MASTER SCHEDULE", Font = new Font("Segoe UI", 20, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, Location = new Point(25, 15) };
             pnlHeader.Controls.Add(lblMain);
             this.Controls.Add(pnlHeader);
@@ -27,7 +27,7 @@ namespace TeacherDashboard.Controls
             this.Controls.Add(pnlScroll);
 
             // 2. Timetable Grid
-            Panel pnlGrid = new Panel() { Dock = DockStyle.Top, Height = 400, BackColor = Color.FromArgb(28, 28, 28), Padding = new Padding(10) };
+            Panel pnlGrid = new Panel() { Dock = DockStyle.Top, Height = 400, BackColor = Color.FromArgb(19, 23, 41), Padding = new Padding(10) };
             pnlScroll.Controls.Add(pnlGrid);
             DrawInnerTable(pnlGrid);
 
@@ -60,11 +60,11 @@ namespace TeacherDashboard.Controls
             for (int i = 0; i < 6; i++) tlp.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16.6f));
             for (int i = 0; i < 6; i++) tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 16.6f));
 
-            for (int i = 0; i < 6; i++) tlp.Controls.Add(new Label { Text = days[i], Font = new Font("Segoe UI", 9, FontStyle.Bold), Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, BackColor = Color.FromArgb(44, 62, 80), ForeColor = Color.White }, i, 0);
+            for (int i = 0; i < 6; i++) tlp.Controls.Add(new Label { Text = days[i], Font = new Font("Segoe UI", 9, FontStyle.Bold), Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, BackColor = Color.FromArgb(25, 30, 56), ForeColor = Color.White }, i, 0);
 
             for (int r = 1; r < 6; r++)
             {
-                tlp.Controls.Add(new Label { Text = times[r-1], Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 8, FontStyle.Bold), BackColor = Color.FromArgb(32, 33, 36), ForeColor = Color.LightGray }, 0, r);
+                tlp.Controls.Add(new Label { Text = times[r-1], Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font("Segoe UI", 8, FontStyle.Bold), BackColor = Color.FromArgb(13, 16, 28), ForeColor = Color.LightGray }, 0, r);
                 for (int c = 1; c < 6; c++)
                 {
                     string sub = (r + c) % 3 == 0 ? "Lecture" : ((r + c) % 3 == 1 ? "Lab" : "Research");
@@ -76,7 +76,7 @@ namespace TeacherDashboard.Controls
 
         private Panel CreateHighlightCard(string phase, string title, string room, Color color)
         {
-            Panel p = new Panel() { Size = new Size(300, 100), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 20, 20) };
+            Panel p = new Panel() { Size = new Size(300, 100), BackColor = Color.FromArgb(19, 23, 41), Margin = new Padding(0, 0, 20, 20) };
             Panel l = new Panel() { Dock = DockStyle.Left, Width = 5, BackColor = color };
             Label lp = new Label() { Text = phase, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(15, 15), ForeColor = color, AutoSize = true };
             Label lt = new Label() { Text = title, Font = new Font("Segoe UI", 11, FontStyle.Bold), Location = new Point(15, 35), Width = 270, ForeColor = Color.White };

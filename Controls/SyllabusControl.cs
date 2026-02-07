@@ -28,20 +28,20 @@ namespace TeacherDashboard.Controls
         private void SetupLayout()
         {
             this.Controls.Clear();
-            this.BackColor = Color.FromArgb(18, 18, 18);
+            this.BackColor = Color.White;
 
             // --- 1. HEADER AREA ---
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(25, 25, 25) };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 70, BackColor = Color.White };
             Label lblTitle = new Label() { 
                 Text = "COURSE PROGRESS DASHBOARD", 
                 Font = new Font("Segoe UI", 20, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = Color.FromArgb(173, 22, 37), 
                 AutoSize = true, 
                 Location = new Point(25, 15) 
             };
             
             Panel pnlHeaderProgress = new Panel() { Dock = DockStyle.Right, Width = 300, Padding = new Padding(10, 15, 25, 10) };
-            lblPerc = new Label() { Text = "Overall Progress: 0%", ForeColor = Color.Silver, Font = new Font("Segoe UI", 9, FontStyle.Bold), Dock = DockStyle.Top, TextAlign = ContentAlignment.TopRight };
+            lblPerc = new Label() { Text = "Overall Progress: 0%", ForeColor = Color.FromArgb(100, 100, 100), Font = new Font("Segoe UI", 9, FontStyle.Bold), Dock = DockStyle.Top, TextAlign = ContentAlignment.TopRight };
             pbOverall = new ProgressBar() { Height = 12, Dock = DockStyle.Top, Maximum = 100, Value = 0, Style = ProgressBarStyle.Continuous };
             pnlHeaderProgress.Controls.Add(pbOverall);
             pnlHeaderProgress.Controls.Add(lblPerc);
@@ -60,24 +60,26 @@ namespace TeacherDashboard.Controls
                 RowCount = 3, 
                 Padding = new Padding(20) 
             };
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 110f)); // Filter Row
-            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 150f)); // Stats Row (Increased for larger cards)
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 140f)); // Filter Row (Increased for breathing room)
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 180f)); // Stats Row (Increased for larger cards)
             tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100f));   // Grid Row
             this.Controls.Add(tlpMain);
 
             // --- 2. FILTER SECTION ---
-            Panel pnlFilterCard = new Panel() { 
+            Panel pnlFilterBg = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(245, 245, 245), Padding = new Padding(20, 15, 20, 15) };
+            tlpMain.Controls.Add(pnlFilterBg, 0, 0);
+
+            TableLayoutPanel tlpFilters = new TableLayoutPanel() { 
                 Dock = DockStyle.Fill, 
-                BackColor = Color.FromArgb(32, 33, 36), 
-                Padding = new Padding(15),
-                Margin = new Padding(0, 0, 0, 20) // Bottom margin for gap to stats
+                ColumnCount = 4, 
+                RowCount = 2,
+                BackColor = Color.Transparent
             };
-            TableLayoutPanel tlpFilters = new TableLayoutPanel() { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 2 };
-            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
-            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
-            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
-            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
-            tlpFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 25f));
+            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260f));
+            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260f));
+            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 260f));
+            tlpFilters.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320f));
+            tlpFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 35f)); // Increased height for labels
 
             tlpFilters.Controls.Add(CreateFilterLabel("DEPARTMENT / STREAM"), 0, 0);
             tlpFilters.Controls.Add(CreateFilterLabel("CLASS DIVISION"), 1, 0);
@@ -85,17 +87,19 @@ namespace TeacherDashboard.Controls
             tlpFilters.Controls.Add(CreateFilterLabel("SEARCH TOPICS"), 3, 0);
 
             cmbDept = CreateDarkComboBox(new string[] { "B.Sc IT", "B.Sc CS", "BMS", "B.Com" });
+            cmbDept.Margin = new Padding(0, 0, 20, 0);
             cmbDept.SelectedIndexChanged += (s, e) => LoadSyllabusData();
             tlpFilters.Controls.Add(cmbDept, 0, 1);
 
             cmbDiv = CreateDarkComboBox(new string[] { "Div A", "Div B", "Div C" });
+            cmbDiv.Margin = new Padding(0, 0, 20, 0);
             cmbDiv.SelectedIndexChanged += (s, e) => LoadSyllabusData();
             tlpFilters.Controls.Add(cmbDiv, 1, 1);
 
             dtpFilter = new DateTimePicker() { 
                 Format = DateTimePickerFormat.Short, 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
+                BackColor = Color.White, 
+                ForeColor = Color.FromArgb(40, 40, 40), 
                 Width = 200, 
                 Font = new Font("Segoe UI", 10),
                 Margin = new Padding(5, 0, 0, 0)
@@ -104,45 +108,45 @@ namespace TeacherDashboard.Controls
             tlpFilters.Controls.Add(dtpFilter, 2, 1);
 
             txtSearch = new TextBox() { 
-                BackColor = Color.FromArgb(45, 45, 48), 
-                ForeColor = Color.White, 
-                BorderStyle = BorderStyle.FixedSingle, 
+                Width = 250, 
+                Height = 32, 
                 Font = new Font("Segoe UI", 11), 
-                Width = 220,
-                Margin = new Padding(5, 0, 0, 0)
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.White,
+                ForeColor = Color.FromArgb(40, 40, 40),
+                Margin = new Padding(0, 0, 0, 0)
             };
             txtSearch.TextChanged += (s, e) => LoadDataForGrid(); // Live search
             tlpFilters.Controls.Add(txtSearch, 3, 1);
 
-            pnlFilterCard.Controls.Add(tlpFilters);
-            tlpMain.Controls.Add(pnlFilterCard, 0, 0);
+            pnlFilterBg.Controls.Add(tlpFilters);
 
             // --- 3. STATS SECTION ---
             FlowLayoutPanel flpStats = new FlowLayoutPanel() { 
                 Dock = DockStyle.Fill, 
-                Padding = new Padding(0), 
-                Margin = new Padding(0, 10, 0, 30), // Added top margin for gap from filter
+                Padding = new Padding(0, 5, 0, 5), 
+                Margin = new Padding(0, 20, 0, 40), // Increased margins for gap
                 WrapContents = false 
             };
-            lblStatTotal = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, AutoSize = true };
-            lblStatDone = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, AutoSize = true };
-            lblStatPending = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, AutoSize = true };
+            lblStatTotal = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true };
+            lblStatDone = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true };
+            lblStatPending = new Label() { Text = "0", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.FromArgb(173, 22, 37), AutoSize = true };
             
             flpStats.Controls.AddRange(new Control[] { 
-                CreateStatBox("TOTAL TOPICS", lblStatTotal, Color.FromArgb(52, 152, 219)),
-                CreateStatBox("COVERED TOPICS", lblStatDone, Color.FromArgb(46, 204, 113)),
-                CreateStatBox("PENDING ITEMS", lblStatPending, Color.FromArgb(231, 76, 60))
+                CreateStatBox("TOTAL TOPICS", lblStatTotal, Color.FromArgb(173, 22, 37)),
+                CreateStatBox("COVERED TOPICS", lblStatDone, Color.FromArgb(173, 22, 37)),
+                CreateStatBox("PENDING ITEMS", lblStatPending, Color.FromArgb(173, 22, 37))
             });
             tlpMain.Controls.Add(flpStats, 0, 1);
 
             // --- 4. GRID SECTION ---
-            Panel pnlGridWrap = new Panel() { Dock = DockStyle.Fill, BackColor = Color.FromArgb(25, 25, 25), Padding = new Padding(1) };
+            Panel pnlGridWrap = new Panel() { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(1, 40, 1, 1) }; // Added top padding for gap from stats
             dgvSyllabus = new DataGridView() { 
                 Dock = DockStyle.Fill, 
-                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None,
-                ForeColor = Color.White,
-                GridColor = Color.FromArgb(50, 50, 50),
+                ForeColor = Color.FromArgb(40, 40, 40),
+                GridColor = Color.FromArgb(220, 220, 220),
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect,
                 AllowUserToAddRows = true, // Allow manual entries
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
@@ -154,8 +158,8 @@ namespace TeacherDashboard.Controls
             dgvSyllabus.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(173, 22, 37);
             dgvSyllabus.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvSyllabus.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dgvSyllabus.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36);
-            dgvSyllabus.DefaultCellStyle.ForeColor = Color.White;
+            dgvSyllabus.DefaultCellStyle.BackColor = Color.White;
+            dgvSyllabus.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
             dgvSyllabus.DefaultCellStyle.SelectionBackColor = Color.FromArgb(173, 22, 37);
             
             // --- EDITABLE & REACTIVE LOGIC ---
@@ -192,7 +196,7 @@ namespace TeacherDashboard.Controls
             tlpMain.Controls.Add(pnlGridWrap, 0, 2);
 
             // --- 5. FOOTER ACTIONS ---
-            Panel pnlFooter = new Panel() { Dock = DockStyle.Bottom, Height = 60, BackColor = Color.FromArgb(18, 18, 18), Padding = new Padding(0, 10, 20, 10) };
+            Panel pnlFooter = new Panel() { Dock = DockStyle.Bottom, Height = 60, BackColor = Color.White, Padding = new Padding(0, 10, 20, 10) };
             Button btnSave = new Button() { 
                 Text = "CONFIRM UPDATES", 
                 FlatStyle = FlatStyle.Flat, 
@@ -241,12 +245,18 @@ namespace TeacherDashboard.Controls
 
         private Label CreateFilterLabel(string text)
         {
-            return new Label() { Text = text, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.Gray, AutoSize = true };
+            return new Label() { 
+                Text = text, 
+                Font = new Font("Segoe UI", 9, FontStyle.Bold), 
+                ForeColor = Color.FromArgb(173, 22, 37), 
+                AutoSize = true,
+                Margin = new Padding(0, 0, 0, 8)
+            };
         }
 
         private Panel CreateStatBox(string title, Label valLabel, Color accent)
         {
-            Panel p = new Panel() { Size = new Size(260, 100), BackColor = Color.FromArgb(32, 33, 36), Margin = new Padding(0, 0, 25, 0) };
+            Panel p = new Panel() { Size = new Size(260, 110), BackColor = Color.White, Margin = new Padding(0, 0, 35, 0) };
             Panel l = new Panel() { Dock = DockStyle.Left, Width = 6, BackColor = accent };
             
             Label lblT = new Label() { 
@@ -259,21 +269,21 @@ namespace TeacherDashboard.Controls
             
             valLabel.Location = new Point(20, 45);
             valLabel.Font = new Font("Segoe UI", 24, FontStyle.Bold);
-            valLabel.ForeColor = Color.White;
+            valLabel.ForeColor = Color.RoyalBlue;
             valLabel.AutoSize = true;
             
             p.Controls.AddRange(new Control[] { l, lblT, valLabel });
             
             // Premium hover effect
-            p.MouseEnter += (s, e) => p.BackColor = Color.FromArgb(45, 45, 50);
-            p.MouseLeave += (s, e) => p.BackColor = Color.FromArgb(32, 33, 36);
+            p.MouseEnter += (s, e) => p.BackColor = Color.FromArgb(245, 245, 245);
+            p.MouseLeave += (s, e) => p.BackColor = Color.White;
             
             return p;
         }
 
         private Label CreateStatLabel(string name, string init, Color color)
         {
-            return new Label() { Text = init, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.White, AutoSize = true };
+            return new Label() { Text = init, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.RoyalBlue, AutoSize = true };
         }
 
         private ComboBox CreateDarkComboBox(string[] items)
@@ -281,12 +291,17 @@ namespace TeacherDashboard.Controls
             ComboBox cb = new ComboBox();
             cb.Items.AddRange(items);
             cb.SelectedIndex = 0;
-            cb.BackColor = Color.FromArgb(45, 45, 48);
-            cb.ForeColor = Color.White;
+            cb.BackColor = Color.White;
+            cb.ForeColor = Color.FromArgb(40, 40, 40);
             cb.FlatStyle = FlatStyle.Flat;
             cb.Font = new Font("Segoe UI", 10);
             cb.DropDownStyle = ComboBoxStyle.DropDownList;
             cb.Width = 180;
+            
+            // Add visible border
+            cb.Paint += (s, e) => {
+                e.Graphics.DrawRectangle(new Pen(Color.FromArgb(180, 180, 180), 1), 0, 0, cb.Width - 1, cb.Height - 1);
+            };
             return cb;
         }
 
@@ -362,8 +377,8 @@ namespace TeacherDashboard.Controls
             pbOverall.Value = perc;
             lblPerc.Text = $"Course Progress: {perc}%";
             
-            lblStatDone.ForeColor = done > 0 ? Color.FromArgb(46, 204, 113) : Color.White;
-            lblStatPending.ForeColor = pending > 0 ? Color.FromArgb(231, 76, 60) : Color.White;
+            lblStatDone.ForeColor = done > 0 ? Color.FromArgb(173, 22, 37) : Color.FromArgb(40, 40, 40);
+            lblStatPending.ForeColor = pending > 0 ? Color.FromArgb(173, 22, 37) : Color.FromArgb(40, 40, 40);
         }
 
         private void InitializeComponent()

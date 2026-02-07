@@ -162,7 +162,8 @@ namespace TeacherDashboard
             this.pnlHeader.Height = 60;
             this.pnlHeader.Controls.Add(this.lblCurrentView);
             this.pnlHeader.Controls.Add(this.lblUserBadge);
-            this.pnlHeader.Controls.Add(this.btnExit);
+            // Redundant btnExit addition removed to prevent overlap in features
+            // this.pnlHeader.Controls.Add(this.btnExit);
 
             this.lblCurrentView.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.lblCurrentView.ForeColor = System.Drawing.Color.White;

@@ -9,3 +9,15 @@ C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\obj\Debug\TeacherDashboard.csp
 C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\obj\Debug\TeacherDashboard.csproj.CoreCompileInputs.cache
 C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\obj\Debug\TeacherDashboard.exe
 C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\obj\Debug\TeacherDashboard.pdb
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\bin\Debug\TeacherDashboard.exe.config
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\bin\Debug\TeacherDashboard.exe
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\bin\Debug\TeacherDashboard.pdb
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.csprojAssemblyReference.cache
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.MainForm.resources
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.LoginForm.resources
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.SplashForm.resources
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.Properties.Resources.resources
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.csproj.GenerateResource.cache
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.csproj.CoreCompileInputs.cache
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.exe
+C:\Users\RAHUL ENUGULA\OneDrive\Desktop\Teacher13\Teacher13\obj\Debug\TeacherDashboard.pdb

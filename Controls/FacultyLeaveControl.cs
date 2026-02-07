@@ -12,9 +12,9 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
-        private Color borderColor = Color.FromArgb(45, 45, 48);
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color borderColor = Color.FromArgb(220, 220, 220);
 
         // UI Components
         private ComboBox cmbLeaveType;
@@ -96,8 +96,8 @@ namespace TeacherDashboard.Controls
             this.Font = new Font("Segoe UI", 10);
 
             // 1. Header
-            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.FromArgb(25, 25, 25) };
-            Label lblTitle = new Label() { Text = "🗓  FACULTY LEAVE & QUOTA MANAGEMENT", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = Color.White, Location = new Point(30, 20), AutoSize = true };
+            Panel pnlHeader = new Panel() { Dock = DockStyle.Top, Height = 75, BackColor = Color.White };
+            Label lblTitle = new Label() { Text = "🗓  FACULTY LEAVE & QUOTA MANAGEMENT", Font = new Font("Segoe UI", 18, FontStyle.Bold), ForeColor = primaryColor, Location = new Point(30, 20), AutoSize = true };
             pnlHeader.Controls.Add(lblTitle);
             Panel pnlAccent = new Panel() { Dock = DockStyle.Bottom, Height = 3, BackColor = primaryColor };
             pnlHeader.Controls.Add(pnlAccent);
@@ -149,7 +149,7 @@ namespace TeacherDashboard.Controls
                 Minimum = 1, 
                 Maximum = 365, 
                 Value = 1, 
-                BackColor = Color.FromArgb(45, 45, 48), 
+                BackColor = Color.White, 
                 ForeColor = Color.FromArgb(46, 204, 113), 
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 BorderStyle = BorderStyle.FixedSingle,
@@ -265,13 +265,13 @@ namespace TeacherDashboard.Controls
             MessageBox.Show($"Application for {days} Day(s) Approved and Deducted from Quota.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private Label CreateValLabel(string text, Color c) => new Label() { Text = text, ForeColor = c, Font = new Font("Segoe UI", 20, FontStyle.Bold), AutoSize = true };
+        private Label CreateValLabel(string text, Color c) => new Label() { Text = text, ForeColor = Color.RoyalBlue, Font = new Font("Segoe UI", 20, FontStyle.Bold), AutoSize = true };
 
         private Panel CreateStatCard(string title, Label val, Color accent) {
             Panel p = new Panel() { Dock = DockStyle.Fill, BackColor = cardBg, Margin = new Padding(0, 0, 15, 0) };
             p.Paint += (s, e) => DrawBorder(e.Graphics, p.ClientRectangle);
             Panel l = new Panel() { Dock = DockStyle.Left, Width = 5, BackColor = accent };
-            Label head = new Label() { Text = title, ForeColor = Color.LightGray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(15, 12), AutoSize = true };
+            Label head = new Label() { Text = title, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Location = new Point(15, 12), AutoSize = true };
             val.Location = new Point(15, 40);
             p.Controls.AddRange(new Control[] { l, head, val });
             return p;
@@ -279,8 +279,8 @@ namespace TeacherDashboard.Controls
 
         private TextBox AddTextbox(TableLayoutPanel p, string label, int col, int row, int colSpan) {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(10, 5, 10, 5) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            TextBox txt = new TextBox() { Dock = DockStyle.Top, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 11), Multiline = row > 0, Height = 35 };
+            Label lbl = new Label() { Text = label, ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            TextBox txt = new TextBox() { Dock = DockStyle.Top, BackColor = Color.White, ForeColor = Color.RoyalBlue, BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 11), Multiline = row > 0, Height = 35 };
             wrap.Controls.AddRange(new Control[] { txt, lbl });
             p.Controls.Add(wrap, col, row); if (colSpan > 1) p.SetColumnSpan(wrap, colSpan);
             return txt;
@@ -288,8 +288,8 @@ namespace TeacherDashboard.Controls
 
         private ComboBox AddDropdown(TableLayoutPanel p, string label, string[] items, int col, int row) {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(10, 5, 10, 5) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
+            Label lbl = new Label() { Text = label, ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            ComboBox cb = new ComboBox() { Dock = DockStyle.Top, FlatStyle = FlatStyle.Flat, BackColor = Color.White, ForeColor = Color.RoyalBlue, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10) };
             cb.Items.AddRange(items); cb.SelectedIndex = 0;
             wrap.Controls.AddRange(new Control[] { cb, lbl });
             p.Controls.Add(wrap, col, row);
@@ -298,16 +298,16 @@ namespace TeacherDashboard.Controls
 
         private DateTimePicker AddDatePicker(TableLayoutPanel p, string label, int col, int row) {
             Panel wrap = new Panel() { Dock = DockStyle.Fill, Padding = new Padding(10, 5, 10, 5) };
-            Label lbl = new Label() { Text = label, ForeColor = Color.Gray, Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
-            DateTimePicker dtp = new DateTimePicker() { Dock = DockStyle.Top, Format = DateTimePickerFormat.Short, BackColor = Color.FromArgb(45, 45, 48), ForeColor = Color.White };
+            Label lbl = new Label() { Text = label, ForeColor = Color.FromArgb(173, 22, 37), Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top };
+            DateTimePicker dtp = new DateTimePicker() { Dock = DockStyle.Top, Format = DateTimePickerFormat.Short };
             wrap.Controls.AddRange(new Control[] { dtp, lbl });
             p.Controls.Add(wrap, col, row);
             return dtp;
         }
 
         private DataGridView CreateStyledGrid(DataTable dt) {
-            DataGridView d = new DataGridView() { Dock = DockStyle.Fill, DataSource = dt, BackgroundColor = Color.FromArgb(30, 30, 30), BorderStyle = BorderStyle.None, ForeColor = Color.White, GridColor = Color.FromArgb(50, 50, 50), RowTemplate = { Height = 40 }, ColumnHeadersHeight = 45, AllowUserToAddRows = false, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, EnableHeadersVisualStyles = false };
-            d.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48); d.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; d.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36); d.DefaultCellStyle.SelectionBackColor = primaryColor;
+            DataGridView d = new DataGridView() { Dock = DockStyle.Fill, DataSource = dt, BackgroundColor = Color.White, BorderStyle = BorderStyle.None, ForeColor = Color.FromArgb(40, 40, 40), GridColor = Color.FromArgb(220, 220, 220), RowTemplate = { Height = 40 }, ColumnHeadersHeight = 45, AllowUserToAddRows = false, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, EnableHeadersVisualStyles = false };
+            d.ColumnHeadersDefaultCellStyle.BackColor = primaryColor; d.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; d.DefaultCellStyle.BackColor = Color.White; d.DefaultCellStyle.SelectionBackColor = primaryColor;
             return d;
         }
 

@@ -10,9 +10,9 @@ namespace TeacherDashboard.Controls
     {
         // Theme Colors
         private Color primaryColor = Color.FromArgb(173, 22, 37); // VSIT Red
-        private Color bgColor = Color.FromArgb(18, 18, 18);
-        private Color cardBg = Color.FromArgb(30, 30, 33);
-        private Color borderColor = Color.FromArgb(45, 45, 48);
+        private Color bgColor = Color.White;
+        private Color cardBg = Color.White;
+        private Color borderColor = Color.FromArgb(220, 220, 220);
 
         // UI Components
         private DataGridView dgvNotices;
@@ -54,7 +54,7 @@ namespace TeacherDashboard.Controls
             this.Dock = DockStyle.Fill;
             this.Padding = new Padding(0);
 
-            // 2. MAIN FLOW (GUARANTEES TOP-TO-BOTTOM ORDER WITH NO OVERLAPS)
+            // 2. MAIN FLOW
             FlowLayoutPanel flpMain = new FlowLayoutPanel() {
                 Dock = DockStyle.Fill,
                 FlowDirection = FlowDirection.TopDown,
@@ -65,11 +65,11 @@ namespace TeacherDashboard.Controls
             this.Controls.Add(flpMain);
 
             // --- SECTION 1: HEADER ---
-            Panel pnlHeader = new Panel() { Width = 1100, Height = 80, BackColor = Color.FromArgb(25, 25, 25) };
+            Panel pnlHeader = new Panel() { Width = 1100, Height = 80, BackColor = Color.White };
             Label lblHeaderTitle = new Label() { 
                 Text = "📩 OFFICE COMMUNICATION & MEETING HUB", 
                 Font = new Font("Segoe UI", 20, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = Color.FromArgb(173, 22, 37), 
                 Location = new Point(30, 22), 
                 AutoSize = true 
             };
@@ -87,7 +87,7 @@ namespace TeacherDashboard.Controls
             pnlGridWrap.Controls.Add(dgvNotices);
             flpMain.Controls.Add(pnlGridWrap);
 
-            // --- SECTION 3: DETAILED VIEW (THE PANEL BELOW) ---
+            // --- SECTION 3: DETAILED VIEW ---
             flpMain.Controls.Add(CreateSectionLabel("MESSAGE / MEETING CONTENT"));
 
             pnlBottomDetail = new Panel() { 
@@ -102,7 +102,7 @@ namespace TeacherDashboard.Controls
             lblSelectedSubject = new Label() { 
                 Text = "Subject Label", 
                 Font = new Font("Segoe UI", 16, FontStyle.Bold), 
-                ForeColor = Color.White, 
+                ForeColor = Color.FromArgb(40, 40, 40), 
                 Dock = DockStyle.Top, 
                 Height = 40 
             };
@@ -119,7 +119,7 @@ namespace TeacherDashboard.Controls
                 Multiline = true, 
                 ReadOnly = true, 
                 BackColor = cardBg, 
-                ForeColor = Color.LightGray, 
+                ForeColor = Color.FromArgb(40, 40, 40), 
                 BorderStyle = BorderStyle.None, 
                 Font = new Font("Segoe UI", 11), 
                 Dock = DockStyle.Fill,
@@ -132,7 +132,6 @@ namespace TeacherDashboard.Controls
             
             flpMain.Controls.Add(pnlBottomDetail);
 
-            // Handle Resizing
             this.Resize += (s, e) => {
                 int targetWidth = this.Width - 60;
                 pnlHeader.Width = this.Width;
@@ -140,7 +139,6 @@ namespace TeacherDashboard.Controls
                 pnlBottomDetail.Width = targetWidth;
             };
         }
-
         private void UpdateDetailDisplay(int idx)
         {
             DataRow row = dtNotices.Rows[idx];
@@ -195,10 +193,10 @@ namespace TeacherDashboard.Controls
             DataGridView d = new DataGridView() { 
                 Dock = DockStyle.Fill, 
                 DataSource = dt, 
-                BackgroundColor = Color.FromArgb(30, 30, 30), 
+                BackgroundColor = Color.White, 
                 BorderStyle = BorderStyle.None, 
-                ForeColor = Color.White, 
-                GridColor = Color.FromArgb(50, 50, 50), 
+                ForeColor = Color.FromArgb(40, 40, 40), 
+                GridColor = Color.FromArgb(220, 220, 220), 
                 RowTemplate = { Height = 40 }, 
                 ColumnHeadersHeight = 45, 
                 AllowUserToAddRows = false, 
@@ -209,10 +207,10 @@ namespace TeacherDashboard.Controls
                 EnableHeadersVisualStyles = false,
                 MultiSelect = false
             };
-            d.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(45, 45, 48); 
+            d.ColumnHeadersDefaultCellStyle.BackColor = primaryColor; 
             d.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; 
             d.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-            d.DefaultCellStyle.BackColor = Color.FromArgb(32, 33, 36); 
+            d.DefaultCellStyle.BackColor = Color.White; 
             d.DefaultCellStyle.SelectionBackColor = primaryColor;
             d.DefaultCellStyle.SelectionForeColor = Color.White;
             d.DefaultCellStyle.Padding = new Padding(10, 0, 0, 0);
